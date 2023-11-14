@@ -1,20 +1,33 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet } from "react-native"
+import { SafeAreaProvider } from "react-native-safe-area-context"
+import { NavigationContainer } from "@react-navigation/native"
+import AuthProvider from "./src/context/auth"
+import MyListsProvider from "./src/context/myLists"
+import Entry from "./src/views/Entry"
+import { colors } from "./src/styles"
+import { ModalPortal } from "react-native-modals"
+import { RootSiblingParent } from "react-native-root-siblings"
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
+    <RootSiblingParent>
+      <SafeAreaProvider style={styles.safeArea}>
+        <AuthProvider>
+          <MyListsProvider>
+            <NavigationContainer>
+              <Entry />
+              <ModalPortal />
+            </NavigationContainer>
+          </MyListsProvider>
+        </AuthProvider>
+      </SafeAreaProvider>
+    </RootSiblingParent>
+  )
 }
 
 const styles = StyleSheet.create({
-  container: {
+  safeArea: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: colors.darkBackground,
   },
-});
+})
