@@ -6,7 +6,6 @@ import { useEffect, useState } from "react"
 
 const Item = ({ item, onEdit }: { item: Item; onEdit: (arg: string) => void }) => {
 	const [listTheme, setListTheme] = useState<{
-		gradients: string[][]
 		themeColors: string[]
 	} | null>(null)
 	const { selectedList } = useMyLists()

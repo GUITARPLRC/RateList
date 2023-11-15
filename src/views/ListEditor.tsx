@@ -48,16 +48,15 @@ export default function ListEditor() {
 				},
 			]}
 		>
-			<Pressable onPress={() => navigator.goBack()}>
+			<Pressable hitSlop={10} onPress={() => navigator.goBack()}>
 				<Text style={[styles.text, { marginBottom: 20 }]}>Back</Text>
 			</Pressable>
-			<View style={{ marginBottom: 30 }}>
+			<View style={{ marginBottom: 20 }}>
 				<Text style={[styles.text, { marginBottom: 10 }]}>Title</Text>
 				<TextInput
 					value={title}
 					style={styles.input}
 					onChangeText={setTitle}
-					placeholderTextColor={colors.lightGrey}
 					keyboardType="default"
 				/>
 			</View>
