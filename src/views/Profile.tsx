@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import {
 	Text,
 	View,
@@ -86,13 +86,20 @@ const getThemeAvatars = (theme: string) => {
 
 const Profile = () => {
 	const [loading, setLoading] = useState(false)
-	const [userAvatar, setUserAvatar] = useState("")
 	const { profile, getProfile, clearProfile } = useAuth()
-	const [username, setUsername] = useState(profile?.username || "")
+	const [username, setUsername] = useState("")
+	const [userAvatar, setUserAvatar] = useState("")
 	const navigator = useNavigation<StackNavigationProp<RootStackParamList>>()
 	const { checkBadges, loading: badgesLoading } = useBadges()
 	const [confirmOpen, setConfirmOpen] = useState(false)
 	const { clearListData } = useMyLists()
+
+	useEffect(() => {
+		if (profile) {
+			setUsername(profile.username)
+			setUserAvatar(profile.avatar)
+		}
+	}, [profile])
 
 	const signOut = async () => {
 		// clear data from context
@@ -126,18 +133,17 @@ const Profile = () => {
 					showToast("Error updating profile")
 				}
 			} finally {
-				console.log("maybe")
 				if (username && userAvatar) {
 					checkBadges("updatedProfile")
 				}
 				setLoading(false)
 				getProfile()
-				setUserAvatar("")
 			}
 		}
 	}
 
 	const screenWidth = Dimensions.get("window").width
+	const disabledUpdate = username === profile?.username && userAvatar === profile?.avatar
 
 	return (
 		<View style={styles.container}>
@@ -207,13 +213,12 @@ const Profile = () => {
 					})}
 			</View>
 			<TouchableOpacity
-				disabled={loading || username === profile?.username || userAvatar === profile?.avatar}
+				disabled={loading || disabledUpdate}
 				onPress={() => updateProfile()}
 				style={[
 					styles.button,
 					{
-						opacity:
-							loading || username === profile?.username || userAvatar === profile?.avatar ? 0.5 : 1,
+						opacity: loading || disabledUpdate ? 0.5 : 1,
 					},
 				]}
 			>

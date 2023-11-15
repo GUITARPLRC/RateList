@@ -34,7 +34,7 @@ export default function ListEditor() {
 		navigator.navigate("Home")
 	}
 
-	const disabled = title === selectedList!.title && theme === selectedList!.theme
+	const disabled = !title || (title === selectedList!.title && theme === selectedList!.theme)
 
 	return (
 		<View
@@ -51,24 +51,29 @@ export default function ListEditor() {
 			<Pressable onPress={() => navigator.goBack()}>
 				<Text style={[styles.text, { marginBottom: 20 }]}>Back</Text>
 			</Pressable>
-			<TextInput
-				value={title}
-				style={styles.input}
-				onChangeText={setTitle}
-				placeholder="Title"
-				placeholderTextColor={colors.lightGrey}
-				keyboardType="default"
-			/>
-			<Picker
-				selectedValue={theme}
-				onValueChange={setTheme}
-				style={styles.picker}
-				itemStyle={styles.pickerItem}
-			>
-				{Object.keys(themes).map((theme) => (
-					<Picker.Item key={theme} label={theme} value={theme} />
-				))}
-			</Picker>
+			<View style={{ marginBottom: 30 }}>
+				<Text style={[styles.text, { marginBottom: 10 }]}>Title</Text>
+				<TextInput
+					value={title}
+					style={styles.input}
+					onChangeText={setTitle}
+					placeholderTextColor={colors.lightGrey}
+					keyboardType="default"
+				/>
+			</View>
+			<View>
+				<Text style={styles.text}>Theme</Text>
+				<Picker
+					selectedValue={theme}
+					onValueChange={setTheme}
+					style={styles.picker}
+					itemStyle={styles.pickerItem}
+				>
+					{Object.keys(themes).map((theme) => (
+						<Picker.Item key={theme} label={theme} value={theme} />
+					))}
+				</Picker>
+			</View>
 			<TouchableOpacity
 				onPress={handleSave}
 				style={[styles.button, { opacity: disabled ? 0.5 : 1 }]}
@@ -116,7 +121,6 @@ const styles = StyleSheet.create({
 		fontSize: 20,
 	},
 	input: {
-		marginVertical: 4,
 		height: 50,
 		borderWidth: 1,
 		borderColor: colors.green,
