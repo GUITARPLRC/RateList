@@ -20,7 +20,7 @@ const Item = ({ item, onEdit }: { item: Item; onEdit: (arg: string) => void }) =
 	const { title, subTitle, rating, id } = item
 	return (
 		<LinearGradient
-			colors={listTheme!.themeColors}
+			colors={listTheme?.themeColors ?? ["black", "black"]}
 			start={{ x: 1, y: 0 }}
 			end={{ x: 0, y: 1 }}
 			style={[styles.linearGradient, { marginBottom: 20 }]}

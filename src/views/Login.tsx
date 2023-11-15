@@ -25,10 +25,9 @@ const Login = () => {
 				email: emailInputValue,
 				password,
 			}
-			await handleSignIn(data)
 			setEmailInputValue("")
 			setPassword("")
-			navigator.navigate("Home")
+			await handleSignIn(data)
 		} catch (error) {
 			if (error instanceof Error) {
 				console.error(error.message)

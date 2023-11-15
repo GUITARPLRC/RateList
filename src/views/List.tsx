@@ -86,7 +86,7 @@ const List = () => {
 			</View>
 			<View style={[styles.actionContainer, styles.margin]}>
 				<Pressable style={{ width: 185 }} onPress={handleSort}>
-					<Text style={styles.text}>Sort</Text>
+					<Text style={styles.text}>Sort: {sortValue}</Text>
 				</Pressable>
 				<Pressable onPress={handleAdd}>
 					<Text style={styles.text}>Add</Text>

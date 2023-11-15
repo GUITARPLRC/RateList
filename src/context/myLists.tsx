@@ -104,6 +104,10 @@ export default function MyListsProvider({ children }: PropsWithChildren) {
 					})
 				}
 				setListData(sortedData)
+				if (selectedList) {
+					const newList = sortedData.find((list) => list.id === selectedList.id)
+					setSelectedList(newList ? newList : null)
+				}
 			}
 		} catch (error) {
 			if (error instanceof Error) {
