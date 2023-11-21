@@ -1,5 +1,5 @@
 import { TextInput, StyleSheet, View, Text, TouchableOpacity, Pressable } from "react-native"
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import Spinner from "react-native-loading-spinner-overlay"
 import { useLogin } from "../hooks/useLogin"
 import { colors } from "../styles"
@@ -7,6 +7,8 @@ import showToast from "../libs/toast"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { useNavigation } from "@react-navigation/native"
 import { StackNavigationProp } from "@react-navigation/stack"
+import Checkbox from "expo-checkbox"
+import AsyncStorage from "@react-native-async-storage/async-storage"
 
 const Login = () => {
 	const [emailInputValue, setEmailInputValue] = useState("")
@@ -14,6 +16,24 @@ const Login = () => {
 	const { handleSignIn, loading } = useLogin()
 	const insets = useSafeAreaInsets()
 	const navigator = useNavigation<StackNavigationProp<RootStackParamList>>()
+	const [remember, setRemember] = useState(false)
+
+	useEffect(() => {
+		const checkData = async () => {
+			const asyncRememberValue = await AsyncStorage.getItem("remember")
+			if (asyncRememberValue) {
+				const values = JSON.parse(asyncRememberValue)
+				try {
+					await handleSignIn(values)
+				} catch (error) {
+					if (error instanceof Error) {
+						console.error(error.message)
+					}
+				}
+			}
+		}
+		checkData()
+	}, [])
 
 	const signIn = async () => {
 		if (!emailInputValue || !password) {
@@ -24,6 +44,9 @@ const Login = () => {
 			const data = {
 				email: emailInputValue,
 				password,
+			}
+			if (remember) {
+				await AsyncStorage.setItem("remember", JSON.stringify(data))
 			}
 			setEmailInputValue("")
 			setPassword("")
@@ -68,9 +91,21 @@ const Login = () => {
 					secureTextEntry={true}
 					keyboardType="default"
 				/>
-				<Pressable onPress={() => navigator.navigate("ForgotPassword")}>
-					<Text style={[styles.text, styles.forgotText]}>Forgot Password</Text>
-				</Pressable>
+				<View
+					style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}
+				>
+					<View style={{ flexDirection: "row", alignItems: "center" }}>
+						<Checkbox disabled={false} value={remember} onValueChange={setRemember} />
+						<Text style={[styles.text, styles.smallText, { marginLeft: 5 }]}>Remember Me</Text>
+					</View>
+					<View>
+						<Pressable onPress={() => navigator.navigate("ForgotPassword")}>
+							<Text style={[styles.text, styles.smallText, styles.forgotPassword]}>
+								Forgot Password
+							</Text>
+						</Pressable>
+					</View>
+				</View>
 			</View>
 			<View>
 				<TouchableOpacity
@@ -120,10 +155,12 @@ const styles = StyleSheet.create({
 		backgroundColor: colors.grey,
 		width: 300,
 	},
-	forgotText: {
+	smallText: {
 		fontSize: 15,
-		textAlign: "right",
 		marginTop: 5,
+	},
+	forgotPassword: {
+		textAlign: "right",
 	},
 	titleText: {
 		fontSize: 50,

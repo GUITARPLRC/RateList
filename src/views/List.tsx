@@ -16,7 +16,7 @@ import Search from "../components/Search"
 const List = () => {
 	const navigator = useNavigation<StackNavigationProp<RootStackParamList>>()
 	const insets = useSafeAreaInsets()
-	const { selectedList } = useMyLists()
+	const { selectedList, setSelectedListItem } = useMyLists()
 	const {
 		loading,
 		addListItem,
@@ -34,15 +34,17 @@ const List = () => {
 		}, []),
 	)
 
-	const handleAdd = () => {
+	const handleAdd = async () => {
 		const newItem = {
-			title: `New Title`,
+			title: "",
 			description: "",
 		}
-		addListItem(newItem)
+		const newListItem = await addListItem(newItem)
+		if (!newListItem) return
+		setSelectedListItem(newListItem)
+		navigator.navigate("ItemEditor")
 	}
 
-	// TODO: first sort doesn't work
 	const handleSort = () => {
 		let newSortValue: SortValue = "Title"
 		if (sortValue === "Title") {
@@ -71,13 +73,13 @@ const List = () => {
 		>
 			<View style={[styles.titleContainer, styles.margin]}>
 				<Spinner visible={loading} />
-				<Text style={[styles.text, styles.categoryTitle]}>{selectedList!.title}</Text>
+				<Text style={[styles.text, styles.categoryTitle]}>{selectedList?.title || ""}</Text>
 				<Pressable onPress={handleEdit}>
 					<Pencil size={20} color={colors.white} />
 				</Pressable>
 			</View>
 			<View style={[styles.margin]}>
-				<Pressable onPress={() => navigator.goBack()}>
+				<Pressable onPress={() => navigator.navigate("Home")}>
 					<Text style={[styles.text]}>Back to My Lists</Text>
 				</Pressable>
 			</View>

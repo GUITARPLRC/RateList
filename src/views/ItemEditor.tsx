@@ -80,6 +80,7 @@ export default function ItemEditor() {
 					onChangeText={setTitle}
 					placeholderTextColor={colors.lightGrey}
 					keyboardType="default"
+					autoFocus={!title}
 				/>
 			</View>
 			<View

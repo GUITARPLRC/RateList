@@ -19,7 +19,7 @@ export const useListItems = () => {
 
 	const filterItemData = () => {
 		if (itemData) {
-			let sortedData = itemData
+			let sortedData = [...itemData]
 			if (searchValue) {
 				sortedData = itemData.filter((item) => {
 					const title = item.title?.toLocaleLowerCase()
@@ -39,7 +39,6 @@ export const useListItems = () => {
 					return a.rating - b.rating
 				}
 			})
-
 			setListItems(newlySortedData)
 		}
 	}
@@ -69,13 +68,18 @@ export const useListItems = () => {
 		}
 	}
 
-	const addListItem = async (item: Partial<Item>) => {
+	const addListItem = async (item: Partial<Item>): Promise<Item | undefined> => {
+		let newItemData = null
 		if (loading || !selectedList?.id) return
 		try {
 			setLoading(true)
-			const { error } = await supabase
+			const { data, error } = await supabase
 				.from("listitems")
 				.insert([{ ...item, listId: selectedList.id }])
+				.select()
+			if (data) {
+				newItemData = data[0]
+			}
 
 			if (error) {
 				throw new Error(error.message)
@@ -89,6 +93,9 @@ export const useListItems = () => {
 			}
 		} finally {
 			setLoading(false)
+			if (newItemData) {
+				return newItemData
+			}
 		}
 	}
 

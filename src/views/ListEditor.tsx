@@ -13,14 +13,15 @@ export default function ListEditor() {
 	const navigator = useNavigation<StackNavigationProp<RootStackParamList>>()
 
 	const { selectedList, updateList, deleteList } = useMyLists()
-	const [title, setTitle] = useState(selectedList!.title)
-	const [theme, setTheme] = useState(selectedList!.theme)
+	const [title, setTitle] = useState(selectedList?.title || "")
+	const [theme, setTheme] = useState(selectedList?.theme || "")
 	const insets = useSafeAreaInsets()
 	const [confirmationOpen, setConfirmationOpen] = useState(false)
 
 	const handleSave = async () => {
+		if (!selectedList?.id) return
 		const newList = {
-			...selectedList!,
+			...selectedList,
 			title,
 			theme,
 		}
@@ -34,7 +35,7 @@ export default function ListEditor() {
 		navigator.navigate("Home")
 	}
 
-	const disabled = !title || (title === selectedList!.title && theme === selectedList!.theme)
+	const disabled = title === selectedList?.title && theme === selectedList?.theme
 
 	return (
 		<View
@@ -48,7 +49,14 @@ export default function ListEditor() {
 				},
 			]}
 		>
-			<Pressable hitSlop={10} onPress={() => navigator.goBack()}>
+			<Pressable
+				hitSlop={10}
+				onPress={() => {
+					setTitle("")
+					setTheme("")
+					navigator.navigate("List")
+				}}
+			>
 				<Text style={[styles.text, { marginBottom: 20 }]}>Back</Text>
 			</Pressable>
 			<View style={{ marginBottom: 20 }}>
@@ -57,7 +65,10 @@ export default function ListEditor() {
 					value={title}
 					style={styles.input}
 					onChangeText={setTitle}
+					placeholder="Add a Title!"
+					placeholderTextColor={colors.lightGrey}
 					keyboardType="default"
+					autoFocus={!title}
 				/>
 			</View>
 			<View>

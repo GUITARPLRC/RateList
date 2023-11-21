@@ -1,5 +1,5 @@
 import { ScrollView, Pressable, Text, StyleSheet, View, Image } from "react-native"
-import React, { useCallback, useState } from "react"
+import React, { useCallback } from "react"
 import { LinearGradient } from "expo-linear-gradient"
 import { useFocusEffect, useNavigation } from "@react-navigation/native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
@@ -15,7 +15,6 @@ import Search from "../components/Search"
 const sortByReferences = [{ type: "Title" }]
 
 export default function Home() {
-	const [sortBy, setSortBy] = useState(sortByReferences[0].type)
 	const {
 		myLists,
 		createList,
@@ -43,6 +42,13 @@ export default function Home() {
 
 	const handleNavigateToProfile = () => {
 		navigator.navigate("Profile")
+	}
+
+	const handleCreateFlow = async () => {
+		const newList = await createList()
+		if (!newList) return
+		setSelectedList(newList)
+		navigator.navigate("ListEditor")
 	}
 
 	return (
@@ -82,7 +88,7 @@ export default function Home() {
 				<Search searchValue={searchValue} setSearchValue={setSearchValue} />
 			</View>
 			<View style={[styles.actionContainer, styles.margin]}>
-				<Pressable onPress={createList}>
+				<Pressable onPress={handleCreateFlow}>
 					<Text style={styles.text}>Add</Text>
 				</Pressable>
 			</View>

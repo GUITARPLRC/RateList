@@ -19,7 +19,7 @@ interface Props {
 	selectedListItem: Item | null
 	setSelectedListItem: Dispatch<SetStateAction<Item | null>>
 	updateList: (list: List) => Promise<void>
-	createList: () => Promise<void>
+	createList: () => Promise<List | undefined>
 	deleteList: () => Promise<void>
 	getLists: () => Promise<void>
 	loading: boolean
@@ -29,7 +29,7 @@ interface Props {
 }
 
 const DEFAULT_LIST: Partial<List> = {
-	title: "New List",
+	title: "",
 	theme: "green",
 	description: "",
 }
@@ -41,7 +41,7 @@ export const MyListsContext = createContext<Props>({
 	selectedListItem: null,
 	setSelectedListItem: () => {},
 	updateList: () => Promise.resolve(),
-	createList: () => Promise.resolve(),
+	createList: () => new Promise(() => {}),
 	deleteList: () => Promise.resolve(),
 	getLists: () => Promise.resolve(),
 	loading: false,
@@ -106,7 +106,9 @@ export default function MyListsProvider({ children }: PropsWithChildren) {
 				setListData(sortedData)
 				if (selectedList) {
 					const newList = sortedData.find((list) => list.id === selectedList.id)
-					setSelectedList(newList ? newList : null)
+					if (newList) {
+						setSelectedList(newList)
+					}
 				}
 			}
 		} catch (error) {
@@ -140,12 +142,16 @@ export default function MyListsProvider({ children }: PropsWithChildren) {
 	}
 
 	const createList = async () => {
+		let createData = null
 		if (loading || !profile?.id) return
 		try {
 			setLoading(true)
 
 			const newList = { ...DEFAULT_LIST, userId: profile.id }
-			const { error } = await supabase.from("lists").insert(newList)
+			const { data, error } = await supabase.from("lists").insert(newList).select()
+			if (data) {
+				createData = data[0]
+			}
 
 			if (error) {
 				throw new Error(error.message)
@@ -160,6 +166,9 @@ export default function MyListsProvider({ children }: PropsWithChildren) {
 			}
 		} finally {
 			setLoading(false)
+			if (createData) {
+				return createData
+			}
 		}
 	}
 
