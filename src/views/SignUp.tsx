@@ -19,6 +19,14 @@ const SignUp = () => {
 			return
 		}
 
+		// check if user already exists
+		const { data } = await supabase.from("users").select("*").eq("email", email.toLocaleLowerCase())
+
+		if (data && data.length > 0) {
+			showToast("User already exists. Please use forgot password or login.")
+			return
+		}
+
 		const { error } = await supabase
 			.from("users")
 			.insert([{ email: email.toLocaleLowerCase(), password }])
@@ -32,6 +40,7 @@ const SignUp = () => {
 		setEmail("")
 		setPassword("")
 		showToast("Account created. You can now login.")
+		navigator.navigate("Login")
 	}
 
 	return (
