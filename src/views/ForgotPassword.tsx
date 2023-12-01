@@ -21,7 +21,10 @@ const ForgotPassword = () => {
 
 		try {
 			// check if email exists in db
-			const { data, error } = await supabase.from("users").select("*").eq("email", email)
+			const { data, error } = await supabase
+				.from("users")
+				.select("*")
+				.eq("email", email.toLocaleLowerCase())
 
 			if (error) {
 				console.log(error)
@@ -41,7 +44,7 @@ const ForgotPassword = () => {
 			const { error: updateError } = await supabase
 				.from("users")
 				.update({ token: newToken, lastResetAttempt: new Date() })
-				.eq("email", email)
+				.eq("email", email.toLocaleLowerCase())
 
 			if (updateError) {
 				console.log(updateError)

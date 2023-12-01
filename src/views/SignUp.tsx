@@ -19,7 +19,9 @@ const SignUp = () => {
 			return
 		}
 
-		const { error } = await supabase.from("users").insert([{ email, password }]).select()
+		const { error } = await supabase
+			.from("users")
+			.insert([{ email: email.toLocaleLowerCase(), password }])
 
 		if (error) {
 			console.log(error)

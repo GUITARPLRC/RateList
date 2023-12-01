@@ -25,7 +25,7 @@ const ResetPassword = () => {
 			const { error } = await supabase
 				.from("users")
 				.update({ password: newPass })
-				.eq("email", params?.data?.email)
+				.eq("email", params?.data?.email.toLocaleLowerCase())
 
 			if (error) {
 				console.log(error)

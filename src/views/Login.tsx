@@ -24,7 +24,10 @@ const Login = () => {
 			if (asyncRememberValue) {
 				const values = JSON.parse(asyncRememberValue)
 				try {
-					await handleSignIn(values)
+					const success = await handleSignIn(values)
+					if (success) {
+						navigator.navigate("Home")
+					}
 				} catch (error) {
 					if (error instanceof Error) {
 						console.error(error.message)
@@ -42,15 +45,18 @@ const Login = () => {
 		}
 		try {
 			const data = {
-				email: emailInputValue,
+				email: emailInputValue.toLocaleLowerCase(),
 				password,
 			}
 			if (remember) {
 				await AsyncStorage.setItem("remember", JSON.stringify(data))
 			}
-			setEmailInputValue("")
-			setPassword("")
-			await handleSignIn(data)
+			const success = await handleSignIn(data)
+			if (success) {
+				setEmailInputValue("")
+				setPassword("")
+				navigator.navigate("Home")
+			}
 		} catch (error) {
 			if (error instanceof Error) {
 				console.error(error.message)

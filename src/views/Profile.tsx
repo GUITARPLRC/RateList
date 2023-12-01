@@ -20,6 +20,7 @@ import Confirmation from "../components/Confirmation"
 import showToast from "../libs/toast"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import useMyLists from "../hooks/useMyLists"
+import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 export const avatars = {
 	bear: require("../../assets/avatars/bear.png"),
@@ -93,6 +94,8 @@ const Profile = () => {
 	const { checkBadges, loading: badgesLoading } = useBadges()
 	const [confirmOpen, setConfirmOpen] = useState(false)
 	const { clearListData } = useMyLists()
+	const [confirmText, setConfirmText] = useState("")
+	const insets = useSafeAreaInsets()
 
 	useEffect(() => {
 		if (profile) {
@@ -142,95 +145,134 @@ const Profile = () => {
 		}
 	}
 
+	const deleteAccount = async () => {
+		if (profile?.email) {
+			const { error } = await supabase.from("users").delete().eq("email", profile.email)
+			if (error) {
+				showToast("Error deleting account")
+				if (error instanceof Error) {
+					console.error(error.message)
+				}
+			} else {
+				signOut()
+			}
+		}
+	}
+
 	const screenWidth = Dimensions.get("window").width
 	const disabledUpdate = username === profile?.username && userAvatar === profile?.avatar
 
 	return (
-		<View style={styles.container}>
+		<View
+			style={[
+				styles.container,
+				{
+					paddingTop: insets.top,
+					paddingLeft: insets.left === 0 ? 20 : insets.left,
+					paddingRight: insets.right === 0 ? 20 : insets.right,
+					paddingBottom: insets.bottom,
+				},
+			]}
+		>
 			<Spinner visible={loading || badgesLoading} />
-			<View
-				style={{
-					flexDirection: "row",
-					justifyContent: "space-between",
-					marginBottom: 20,
-				}}
-			>
-				<TouchableOpacity disabled={loading} onPress={() => navigator.goBack()}>
-					<Text style={styles.text}>Back to Lists</Text>
-				</TouchableOpacity>
-				<TouchableOpacity disabled={loading} onPress={() => setConfirmOpen(true)}>
-					<Text style={styles.text}>Sign Out</Text>
-				</TouchableOpacity>
-			</View>
-			<View style={{ marginBottom: 20 }}>
-				<Text style={[styles.text, { marginBottom: 10 }]}>Display Name:</Text>
-				<TextInput
-					style={styles.input}
-					onChangeText={setUsername}
-					value={username}
-					placeholder="Display Name"
-					placeholderTextColor={colors.lightGrey}
-					keyboardType="default"
-				/>
-			</View>
-			<Text style={styles.text}>Choose an avatar:</Text>
-			<View
-				style={{
-					flexDirection: "row",
-					flexWrap: "wrap",
-					justifyContent: "center",
-					gap: 10,
-					marginVertical: 15,
-				}}
-			>
-				{currentThemes
-					.reduce((acc, theme) => {
-						return acc.concat(getThemeAvatars(theme))
-					}, [] as string[])
-					.sort()
-					.map((avatar) => {
-						const avatarBorderStyle =
-							(userAvatar ? userAvatar : profile?.avatar) === avatar
-								? {
-										borderColor: colors.green,
-										borderWidth: 2,
-										borderRadius: screenWidth,
-										padding: 1,
-								  }
-								: { margin: 3 }
-						return (
-							<TouchableOpacity
-								key={avatar}
-								onPress={() => setUserAvatar(avatar)}
-								style={avatarBorderStyle}
-							>
-								<Image
-									source={avatars[avatar as keyof typeof avatars]}
-									style={{ width: screenWidth / 7, height: screenWidth / 7 }}
-								/>
-							</TouchableOpacity>
-						)
-					})}
-			</View>
-			<TouchableOpacity
-				disabled={loading || disabledUpdate}
-				onPress={() => updateProfile()}
-				style={[
-					styles.button,
-					{
-						opacity: loading || disabledUpdate ? 0.5 : 1,
-					},
-				]}
-			>
-				<Text style={styles.text}>Update</Text>
-			</TouchableOpacity>
-			<Badges />
 			<Confirmation
 				isOpen={confirmOpen}
 				onClose={() => setConfirmOpen(false)}
-				onConfirm={signOut}
-				confirmText="Are you sure you want to sign out?"
+				onConfirm={confirmText ? deleteAccount : signOut}
+				confirmText={confirmText ? confirmText : "Are you sure you want to sign out?"}
 			/>
+			<View style={{ flex: 1, justifyContent: "space-between" }}>
+				<View>
+					<View
+						style={{
+							flexDirection: "row",
+							justifyContent: "space-between",
+							marginBottom: 20,
+						}}
+					>
+						<TouchableOpacity disabled={loading} onPress={() => navigator.goBack()}>
+							<Text style={styles.text}>Back to Lists</Text>
+						</TouchableOpacity>
+						<TouchableOpacity disabled={loading} onPress={() => setConfirmOpen(true)}>
+							<Text style={styles.text}>Sign Out</Text>
+						</TouchableOpacity>
+					</View>
+					<View style={{ marginBottom: 20 }}>
+						<Text style={[styles.text, { marginBottom: 10 }]}>Display Name:</Text>
+						<TextInput
+							style={styles.input}
+							onChangeText={setUsername}
+							value={username}
+							placeholder="Display Name"
+							placeholderTextColor={colors.lightGrey}
+							keyboardType="default"
+						/>
+					</View>
+					<Text style={styles.text}>Choose an avatar:</Text>
+					<View
+						style={{
+							flexDirection: "row",
+							flexWrap: "wrap",
+							justifyContent: "center",
+							gap: 10,
+							marginVertical: 15,
+						}}
+					>
+						{currentThemes
+							.reduce((acc, theme) => {
+								return acc.concat(getThemeAvatars(theme))
+							}, [] as string[])
+							.sort()
+							.map((avatar) => {
+								const avatarBorderStyle =
+									(userAvatar ? userAvatar : profile?.avatar) === avatar
+										? {
+												borderColor: colors.green,
+												borderWidth: 2,
+												borderRadius: screenWidth,
+												padding: 1,
+										  }
+										: { margin: 3 }
+								return (
+									<TouchableOpacity
+										key={avatar}
+										onPress={() => setUserAvatar(avatar)}
+										style={avatarBorderStyle}
+									>
+										<Image
+											source={avatars[avatar as keyof typeof avatars]}
+											style={{ width: screenWidth / 7, height: screenWidth / 7 }}
+										/>
+									</TouchableOpacity>
+								)
+							})}
+					</View>
+					<TouchableOpacity
+						disabled={loading || disabledUpdate}
+						onPress={() => updateProfile()}
+						style={[
+							styles.button,
+							{
+								opacity: loading || disabledUpdate ? 0.5 : 1,
+							},
+						]}
+					>
+						<Text style={styles.text}>Update</Text>
+					</TouchableOpacity>
+					<Badges />
+				</View>
+				<View>
+					<TouchableOpacity
+						onPress={() => {
+							setConfirmText("Are you sure you want to delete your account?")
+							setConfirmOpen(true)
+						}}
+						style={styles.buttonDanger}
+					>
+						<Text style={styles.text}>Delete Account</Text>
+					</TouchableOpacity>
+				</View>
+			</View>
 		</View>
 	)
 }
@@ -239,13 +281,18 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		backgroundColor: colors.darkBackground,
-		paddingHorizontal: 20,
-		paddingTop: 70,
 	},
 	button: {
-		marginVertical: 15,
+		marginTop: 15,
 		alignItems: "center",
 		backgroundColor: colors.green,
+		padding: 12,
+		borderRadius: 4,
+	},
+	buttonDanger: {
+		marginVertical: 25,
+		alignItems: "center",
+		backgroundColor: colors.red,
 		padding: 12,
 		borderRadius: 4,
 	},

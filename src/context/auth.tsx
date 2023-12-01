@@ -5,14 +5,14 @@ import AsyncStorage from "@react-native-async-storage/async-storage"
 
 interface Props {
 	profile: Profile | null
-	getProfile: () => void
+	getProfile: () => Promise<void>
 	loading: boolean
 	clearProfile: () => void
 }
 
 export const AuthContext = createContext<Props>({
 	profile: null,
-	getProfile: () => {},
+	getProfile: () => Promise.resolve(),
 	loading: false,
 	clearProfile: () => {},
 })
