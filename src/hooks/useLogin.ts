@@ -3,10 +3,13 @@ import supabase from "../config/supabase"
 import showToast from "../libs/toast"
 import { useAuth } from "../context/auth"
 import AsyncStorage from "@react-native-async-storage/async-storage"
+import { useNavigation } from "@react-navigation/native"
+import { StackNavigationProp } from "@react-navigation/stack"
 
 export const useLogin = () => {
 	const [loading, setLoading] = useState(false)
 	const { getProfile } = useAuth()
+	const navigator = useNavigation<StackNavigationProp<RootStackParamList>>()
 
 	const handleSignIn = async ({ email, password }: { email: string; password: string }) => {
 		setLoading(true)
@@ -40,5 +43,30 @@ export const useLogin = () => {
 		return true
 	}
 
-	return { loading, handleSignIn }
+	const signIn = async (email: string, password: string, remember: boolean) => {
+		if (!email || !password) {
+			showToast("Please enter an email and password")
+			return
+		}
+		try {
+			const data = {
+				email: email.toLocaleLowerCase(),
+				password,
+			}
+			if (remember) {
+				await AsyncStorage.setItem("remember", JSON.stringify(data))
+			}
+			const success = await handleSignIn(data)
+			if (success) {
+				navigator.navigate("Home")
+			}
+		} catch (error) {
+			if (error instanceof Error) {
+				console.error(error.message)
+				showToast("Try again")
+			}
+		}
+	}
+
+	return { loading, handleSignIn, signIn }
 }

@@ -13,7 +13,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage"
 const Login = () => {
 	const [emailInputValue, setEmailInputValue] = useState("")
 	const [password, setPassword] = useState("")
-	const { handleSignIn, loading } = useLogin()
+	const { handleSignIn, loading, signIn } = useLogin()
 	const insets = useSafeAreaInsets()
 	const navigator = useNavigation<StackNavigationProp<RootStackParamList>>()
 	const [remember, setRemember] = useState(false)
@@ -37,33 +37,6 @@ const Login = () => {
 		}
 		checkData()
 	}, [])
-
-	const signIn = async () => {
-		if (!emailInputValue || !password) {
-			showToast("Please enter an email and password")
-			return
-		}
-		try {
-			const data = {
-				email: emailInputValue.toLocaleLowerCase(),
-				password,
-			}
-			if (remember) {
-				await AsyncStorage.setItem("remember", JSON.stringify(data))
-			}
-			const success = await handleSignIn(data)
-			if (success) {
-				setEmailInputValue("")
-				setPassword("")
-				navigator.navigate("Home")
-			}
-		} catch (error) {
-			if (error instanceof Error) {
-				console.error(error.message)
-				showToast("Try again")
-			}
-		}
-	}
 
 	return (
 		<View
@@ -98,7 +71,12 @@ const Login = () => {
 					keyboardType="default"
 				/>
 				<View
-					style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}
+					style={{
+						flexDirection: "row",
+						alignItems: "center",
+						justifyContent: "space-between",
+						marginTop: 20,
+					}}
 				>
 					<View style={{ flexDirection: "row", alignItems: "center" }}>
 						<Checkbox disabled={false} value={remember} onValueChange={setRemember} />
@@ -115,7 +93,7 @@ const Login = () => {
 			</View>
 			<View>
 				<TouchableOpacity
-					onPress={() => signIn()}
+					onPress={() => signIn(emailInputValue, password, remember)}
 					style={[styles.button, { opacity: !emailInputValue || !password ? 0.5 : 1 }]}
 					disabled={emailInputValue.length === 0 || password.length === 0}
 				>

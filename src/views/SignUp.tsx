@@ -6,12 +6,16 @@ import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { useNavigation } from "@react-navigation/native"
 import { StackNavigationProp } from "@react-navigation/stack"
 import supabase from "../config/supabase"
+import Checkbox from "expo-checkbox"
+import { useLogin } from "../hooks/useLogin"
 
 const SignUp = () => {
 	const [email, setEmail] = useState("")
 	const [password, setPassword] = useState("")
 	const insets = useSafeAreaInsets()
 	const navigator = useNavigation<StackNavigationProp<RootStackParamList>>()
+	const [remember, setRemember] = useState(false)
+	const { signIn } = useLogin()
 
 	const signUp = async () => {
 		if (!email || !password) {
@@ -39,8 +43,23 @@ const SignUp = () => {
 
 		setEmail("")
 		setPassword("")
-		showToast("Account created. You can now login.")
-		navigator.navigate("Login")
+		const emailjsParams = {
+			account: email,
+		}
+		fetch("https://api.emailjs.com/api/v1.0/email/send", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+				service_id: "service_xtkchaz",
+				template_id: "template_2ewriek",
+				user_id: "w0on1dwNj7pYOLeCd",
+				template_params: emailjsParams,
+			}),
+		})
+		showToast("A New User 😮 Welcome!")
+		signIn(email, password, remember)
 	}
 
 	return (
@@ -74,6 +93,18 @@ const SignUp = () => {
 					keyboardType="default"
 					secureTextEntry={true}
 				/>
+				<View
+					style={{
+						flexDirection: "row",
+						alignItems: "center",
+						marginTop: 20,
+					}}
+				>
+					<View style={{ flexDirection: "row", alignItems: "center" }}>
+						<Checkbox disabled={false} value={remember} onValueChange={setRemember} />
+						<Text style={[styles.text, { marginLeft: 5 }]}>Remember Me</Text>
+					</View>
+				</View>
 			</View>
 			<TouchableOpacity
 				onPress={() => signUp()}
