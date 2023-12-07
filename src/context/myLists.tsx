@@ -13,7 +13,7 @@ import { useBadges } from "../hooks/useBadges"
 import showToast from "../libs/toast"
 
 interface Props {
-	myLists: List[] | null
+	myLists: List[]
 	selectedList: List | null
 	setSelectedList: Dispatch<SetStateAction<List | null>>
 	selectedListItem: Item | null
@@ -55,21 +55,22 @@ export function useMyLists() {
 }
 
 export default function MyListsProvider({ children }: PropsWithChildren) {
-	const [myLists, setMyLists] = useState<List[] | null>([])
-	const [listData, setListData] = useState<List[] | null>([])
+	const [myLists, setMyLists] = useState<List[]>([])
+	const [listData, setListData] = useState<List[]>([])
 	const [selectedList, setSelectedList] = useState<List | null>(null)
 	const [selectedListItem, setSelectedListItem] = useState<Item | null>(null)
 	const [loading, setLoading] = useState(false)
 	const { profile } = useAuth()
 	const [searchValue, setSearchValue] = useState("")
 	const { checkBadges } = useBadges()
+	console.log({ selectedList })
 
 	useEffect(() => {
 		filterListData()
 	}, [searchValue, listData])
 
 	const clearListData = () => {
-		setMyLists(null)
+		setMyLists([])
 	}
 
 	const filterListData = () => {
@@ -104,12 +105,6 @@ export default function MyListsProvider({ children }: PropsWithChildren) {
 					})
 				}
 				setListData(sortedData)
-				if (selectedList) {
-					const newList = sortedData.find((list) => list.id === selectedList.id)
-					if (newList) {
-						setSelectedList(newList)
-					}
-				}
 			}
 		} catch (error) {
 			if (error instanceof Error) {
@@ -125,11 +120,14 @@ export default function MyListsProvider({ children }: PropsWithChildren) {
 		if (loading) return
 		try {
 			setLoading(true)
-			const { error } = await supabase.from("lists").upsert(list)
+			const { data, error } = await supabase.from("lists").upsert(list).select()
 			if (error) {
 				throw new Error(error.message)
 			} else {
-				getLists()
+				if (data && data.length) {
+					setSelectedList(data[0])
+				}
+				await getLists()
 			}
 		} catch (error) {
 			if (error instanceof Error) {
