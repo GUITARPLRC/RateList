@@ -54,7 +54,7 @@ export default function ListEditor() {
 				onPress={() => {
 					setTitle("")
 					setTheme("")
-					navigator.navigate("List")
+					navigator.goBack()
 				}}
 			>
 				<Text style={[styles.text, { marginBottom: 20 }]}>Back</Text>
