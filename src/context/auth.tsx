@@ -27,6 +27,8 @@ export default function AuthProvider({ children }: PropsWithChildren) {
 
 	const clearProfile = () => {
 		setProfile(null)
+		AsyncStorage.removeItem("email")
+		AsyncStorage.removeItem("remember")
 	}
 
 	const getProfile = async () => {
