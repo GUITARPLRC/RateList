@@ -36,7 +36,7 @@ const SignUp = () => {
 			.insert([{ email: email.toLocaleLowerCase(), password }])
 
 		if (error) {
-			console.log(error)
+			console.error(error)
 			showToast("Something went wrong")
 			return
 		}

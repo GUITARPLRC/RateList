@@ -99,7 +99,7 @@ export default function Home() {
 			</View>
 			<ScrollView>
 				{/* TODO: handle no lists - empty view */}
-				{myLists &&
+				{myLists.length ? (
 					myLists.map((list) => (
 						<LinearGradient
 							colors={themes[list.theme as keyof typeof themes].themeColors}
@@ -115,7 +115,10 @@ export default function Home() {
 								<Text style={[styles.text, styles.categoryTitle]}>{list.title}</Text>
 							</Pressable>
 						</LinearGradient>
-					))}
+					))
+				) : (
+					<Text style={styles.text}>Create A List!</Text>
+				)}
 			</ScrollView>
 		</View>
 	)

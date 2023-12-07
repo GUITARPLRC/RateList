@@ -23,7 +23,7 @@ const TokenEntry = () => {
 			const { data, error } = await supabase.from("users").select("*").eq("token", token)
 
 			if (error) {
-				console.log(error)
+				console.error(error)
 				showToast("Something went wrong")
 				return
 			}

@@ -27,7 +27,7 @@ const ForgotPassword = () => {
 				.eq("email", email.toLocaleLowerCase())
 
 			if (error) {
-				console.log(error)
+				console.error(error)
 				showToast("Something went wrong")
 				return
 			}
@@ -47,7 +47,7 @@ const ForgotPassword = () => {
 				.eq("email", email.toLocaleLowerCase())
 
 			if (updateError) {
-				console.log(updateError)
+				console.error(updateError)
 				showToast("Something went wrong")
 				return
 			}
@@ -72,7 +72,7 @@ const ForgotPassword = () => {
 
 			navigator.navigate("TokenEntry")
 		} catch (error) {
-			console.log(error)
+			console.error(error)
 			showToast("Something went wrong")
 		}
 	}

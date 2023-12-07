@@ -28,7 +28,7 @@ const ResetPassword = () => {
 				.eq("email", params?.data?.email.toLocaleLowerCase())
 
 			if (error) {
-				console.log(error)
+				console.error(error)
 				showToast("Something went wrong")
 				return
 			}
