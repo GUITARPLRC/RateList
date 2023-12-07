@@ -11,6 +11,7 @@ import { avatars } from "./Profile"
 import Spinner from "react-native-loading-spinner-overlay"
 import { colors, themes } from "../styles"
 import Search from "../components/Search"
+import { userReview } from "../libs/appStore"
 
 const sortByReferences = [{ type: "Title" }]
 
@@ -49,6 +50,10 @@ export default function Home() {
 		if (!newList) return
 		setSelectedList(newList)
 		navigator.navigate("ListEditor")
+		// ask for store review if user has 3 or more lists
+		if (myLists.length >= 3 && profile && !profile?.hasSubmittedReview) {
+			userReview(profile.id)
+		}
 	}
 
 	return (

@@ -7,4 +7,5 @@ interface Profile {
 	email: string
 	password: string
 	lastResetAttempt: date
+	hasSubmittedReview: boolean
 }

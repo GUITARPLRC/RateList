@@ -14,7 +14,8 @@
 		"assetBundlePatterns": ["**/*"],
 		"ios": {
 			"supportsTablet": true,
-			"bundleIdentifier": "com.chuckreynolds.ratelist"
+			"bundleIdentifier": "com.chuckreynolds.ratelist",
+			"appStoreUrl": "https://apps.apple.com/us/app/ratelist/id1534976589"
 		},
 		"android": {
 			"adaptiveIcon": {
