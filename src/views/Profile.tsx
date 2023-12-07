@@ -273,6 +273,9 @@ const Profile = () => {
 					</TouchableOpacity>
 				</View>
 			</View>
+			<Text style={[styles.text, styles.smallText, { textAlign: "center", marginBottom: 20 }]}>
+				{`v${require("../../package.json").version}`}
+			</Text>
 		</View>
 	)
 }
@@ -312,6 +315,9 @@ const styles = StyleSheet.create({
 		color: colors.white,
 		fontFamily: "Gill Sans",
 		fontSize: 20,
+	},
+	smallText: {
+		fontSize: 16,
 	},
 })
 
