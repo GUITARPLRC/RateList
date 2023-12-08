@@ -38,7 +38,6 @@ export const useBadges = () => {
 	}
 
 	const checkBadges = (task: checkBadgesArgs) => {
-		console.log({ badges })
 		let type: BadgeTypes | null = null
 		switch (task) {
 			case "addList":
@@ -55,7 +54,6 @@ export const useBadges = () => {
 				break
 		}
 		const badgeExists = badges.find((badge) => badge.type === type)
-		console.log({ badgeExists })
 		if (type && !badgeExists) {
 			createBadge(type)
 		}
