@@ -38,24 +38,26 @@ export const useBadges = () => {
 	}
 
 	const checkBadges = (task: checkBadgesArgs) => {
-		const userBadgeTypes = badges.map((badge) => badge.type)
-		let type = null
+		console.log({ badges })
+		let type: BadgeTypes | null = null
 		switch (task) {
 			case "addList":
-				userBadgeTypes.includes("blocks") ? null : (type = "blocks")
+				type = "blocks"
 				break
 			case "deleteList":
-				userBadgeTypes.includes("rocket") ? null : (type = "rocket")
+				type = "rocket"
 				break
 			case "updatedProfile":
-				userBadgeTypes.includes("trophy") ? null : (type = "trophy")
+				type = "trophy"
 				break
 			case "addRating":
-				userBadgeTypes.includes("crown") ? null : (type = "crown")
+				type = "crown"
 				break
 		}
-		if (type) {
-			createBadge(type as BadgeTypes)
+		const badgeExists = badges.find((badge) => badge.type === type)
+		console.log({ badgeExists })
+		if (type && !badgeExists) {
+			createBadge(type)
 		}
 	}
 
@@ -89,5 +91,6 @@ export const useBadges = () => {
 		loading,
 		setLoading,
 		checkBadges,
+		fetchBadges,
 	}
 }
