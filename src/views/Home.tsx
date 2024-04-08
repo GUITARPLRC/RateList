@@ -12,8 +12,7 @@ import Spinner from "react-native-loading-spinner-overlay"
 import { colors, themes } from "../styles"
 import Search from "../components/Search"
 import { userReview } from "../libs/appStore"
-
-const sortByReferences = [{ type: "Title" }]
+import { setUser } from "@sentry/react-native"
 
 export default function Home() {
 	const {
@@ -31,6 +30,7 @@ export default function Home() {
 	useFocusEffect(
 		useCallback(() => {
 			getLists()
+			setUser({ email: profile?.email, username: profile?.username })
 		}, [profile]),
 	)
 
