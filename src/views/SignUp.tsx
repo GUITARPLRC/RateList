@@ -15,21 +15,34 @@ const SignUp = () => {
 	const insets = useSafeAreaInsets()
 	const navigator = useNavigation<StackNavigationProp<RootStackParamList>>()
 	const [remember, setRemember] = useState(false)
+	const [busy, setBusy] = useState(false)
 	const { signIn } = useLogin()
 
 	const signUp = async () => {
+		if (busy) return
+		setBusy(true)
+
 		if (!email || !password) {
 			showToast("Please enter an email and password")
+			return
+		}
+
+		// check if email is valid
+		const emailRegex = /\S+@\S+\.\S+/
+		if (!emailRegex.test(email)) {
+			showToast("Please enter a valid email")
 			return
 		}
 
 		// check if user already exists
 		const { data } = await supabase.from("users").select("*").eq("email", email.toLocaleLowerCase())
 
+
 		if (data && data.length > 0) {
 			showToast("User already exists. Please use forgot password or login.")
 			return
 		}
+		return
 
 		const { error } = await supabase
 			.from("users")
@@ -58,6 +71,7 @@ const SignUp = () => {
 				template_params: emailjsParams,
 			}),
 		})
+		setBusy(false)
 		showToast("A New User 😮 Welcome!")
 		signIn(email, password, remember)
 	}
