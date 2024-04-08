@@ -13,8 +13,6 @@ import { colors, themes } from "../styles"
 import Search from "../components/Search"
 import { userReview } from "../libs/appStore"
 
-const sortByReferences = [{ type: "Title" }]
-
 export default function Home() {
 	const {
 		myLists,

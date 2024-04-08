@@ -63,7 +63,6 @@ export default function MyListsProvider({ children }: PropsWithChildren) {
 	const { profile } = useAuth()
 	const [searchValue, setSearchValue] = useState("")
 	const { checkBadges } = useBadges()
-	console.log({ selectedList })
 
 	useEffect(() => {
 		filterListData()
