@@ -1,6 +1,6 @@
 {
 	"expo": {
-		"name": "ratelist",
+		"name": "RateList",
 		"slug": "ratelist",
 		"version": "1.0.0",
 		"orientation": "portrait",
@@ -26,6 +26,8 @@
 		},
 		"web": {
 			"favicon": "./assets/favicon.png"
-		}
+		},
+		"plugins": ["expo-secure-store"],
+		"scheme": "your-app-scheme"
 	}
 }

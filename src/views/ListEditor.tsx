@@ -1,22 +1,39 @@
 import { View, TextInput, StyleSheet, TouchableOpacity, Text, Pressable } from "react-native"
-import { useSafeAreaInsets } from "react-native-safe-area-context"
-import { useState } from "react"
+import { useEffect, useLayoutEffect, useState } from "react"
 import { Picker } from "@react-native-picker/picker"
-import { useNavigation } from "@react-navigation/native"
-import { StackNavigationProp } from "@react-navigation/stack"
 import useMyLists from "../hooks/useMyLists"
 import { colors, themes } from "../styles"
 import Confirmation from "../components/Confirmation"
 import showToast from "../libs/toast"
+import { navigationRef } from "../libs/navigationUtilities"
+import { useNavigation } from "@react-navigation/native"
 
 export default function ListEditor() {
-	const navigator = useNavigation<StackNavigationProp<RootStackParamList>>()
-
-	const { selectedList, updateList, deleteList } = useMyLists()
+	const { selectedList, updateList, deleteList, createList, setSelectedList } = useMyLists()
 	const [title, setTitle] = useState(selectedList?.title || "")
-	const [theme, setTheme] = useState(selectedList?.theme || "")
-	const insets = useSafeAreaInsets()
+	const [theme, setTheme] = useState(selectedList?.theme || "green")
 	const [confirmationOpen, setConfirmationOpen] = useState(false)
+	const navigation = useNavigation()
+
+	const handleNewList = async () => {
+		if (!selectedList?.id) {
+			const data = await createList()
+			setTitle("")
+			setTheme("green")
+			setSelectedList(data)
+		}
+	}
+
+	useEffect(() => {
+		handleNewList()
+		navigation.setOptions({
+			headerRight: () => (
+				<Pressable onPress={() => handleSave()} style={{ marginRight: 20 }}>
+					<Text style={styles.text}>Save</Text>
+				</Pressable>
+			),
+		})
+	}, [selectedList])
 
 	const handleSave = async () => {
 		if (!selectedList?.id) return
@@ -27,38 +44,17 @@ export default function ListEditor() {
 		}
 		await updateList(newList)
 		showToast("List updated")
-		navigator.navigate("List")
+		navigationRef.navigate("List")
 	}
+
 	const handleDelete = async () => {
 		await deleteList()
 		showToast("List deleted")
-		navigator.navigate("Home")
+		navigationRef.navigate("Home")
 	}
 
-	const disabled = title === selectedList?.title && theme === selectedList?.theme
-
 	return (
-		<View
-			style={[
-				styles.container,
-				{
-					paddingTop: insets.top,
-					paddingLeft: insets.left === 0 ? 20 : insets.left,
-					paddingRight: insets.right === 0 ? 20 : insets.right,
-					paddingBottom: insets.bottom,
-				},
-			]}
-		>
-			<Pressable
-				hitSlop={10}
-				onPress={() => {
-					setTitle("")
-					setTheme("")
-					navigator.goBack()
-				}}
-			>
-				<Text style={[styles.text, { marginBottom: 20 }]}>Back</Text>
-			</Pressable>
+		<View style={[styles.container]}>
 			<View style={{ marginBottom: 20 }}>
 				<Text style={[styles.text, { marginBottom: 10 }]}>Title</Text>
 				<TextInput
@@ -79,18 +75,11 @@ export default function ListEditor() {
 					style={styles.picker}
 					itemStyle={styles.pickerItem}
 				>
-					{Object.keys(themes).map((theme) => (
-						<Picker.Item key={theme} label={theme} value={theme} />
+					{Object.keys(themes).map((themeItem) => (
+						<Picker.Item key={themeItem} label={themeItem} value={themeItem} />
 					))}
 				</Picker>
 			</View>
-			<TouchableOpacity
-				onPress={handleSave}
-				style={[styles.button, { opacity: disabled ? 0.5 : 1 }]}
-				disabled={disabled}
-			>
-				<Text style={styles.text}>Save</Text>
-			</TouchableOpacity>
 			<TouchableOpacity onPress={() => setConfirmationOpen(true)} style={styles.buttonDanger}>
 				<Text style={styles.text}>Delete</Text>
 			</TouchableOpacity>
@@ -108,8 +97,7 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		backgroundColor: colors.darkBackground,
-		paddingHorizontal: 20,
-		paddingTop: 70,
+		padding: 20,
 	},
 	button: {
 		marginBottom: 15,

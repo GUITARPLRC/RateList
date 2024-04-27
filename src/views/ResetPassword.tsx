@@ -3,15 +3,14 @@ import React, { useState } from "react"
 import { colors } from "../styles"
 import showToast from "../libs/toast"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
-import { useNavigation, useRoute } from "@react-navigation/native"
-import { StackNavigationProp } from "@react-navigation/stack"
+import { useRoute } from "@react-navigation/native"
 import supabase from "../config/supabase"
+import { navigationRef } from "../libs/navigationUtilities"
 
 const ResetPassword = () => {
 	const [newPass, setNewPass] = useState("")
 	const [confirmPass, setConfirmPass] = useState("")
 	const insets = useSafeAreaInsets()
-	const navigator = useNavigation<StackNavigationProp<RootStackParamList>>()
 	const { params } = useRoute() as { params: { data: { email: string } } }
 
 	const sendReset = async () => {
@@ -35,7 +34,7 @@ const ResetPassword = () => {
 
 			showToast("Password updated")
 
-			navigator.navigate("Login")
+			navigationRef.navigate("Login")
 		} catch (error) {
 			if (error instanceof Error) {
 				console.error(error.message)
@@ -84,7 +83,7 @@ const ResetPassword = () => {
 					<Text style={styles.text}>Reset</Text>
 				</TouchableOpacity>
 			</View>
-			<Pressable style={{ alignItems: "center" }} onPress={() => navigator.navigate("Login")}>
+			<Pressable style={{ alignItems: "center" }} onPress={() => navigationRef.navigate("Login")}>
 				<Text style={styles.text}>Back To Login</Text>
 			</Pressable>
 		</View>

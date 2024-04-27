@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "ratelist.app"
-               BlueprintName = "ratelist"
-               ReferencedContainer = "container:ratelist.xcodeproj">
+               BuildableName = "RateList.app"
+               BlueprintName = "RateList"
+               ReferencedContainer = "container:RateList.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "ratelistTests.xctest"
-               BlueprintName = "ratelistTests"
-               ReferencedContainer = "container:ratelist.xcodeproj">
+               BuildableName = "RateListTests.xctest"
+               BlueprintName = "RateListTests"
+               ReferencedContainer = "container:RateList.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "ratelist.app"
-            BlueprintName = "ratelist"
-            ReferencedContainer = "container:ratelist.xcodeproj">
+            BuildableName = "RateList.app"
+            BlueprintName = "RateList"
+            ReferencedContainer = "container:RateList.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "ratelist.app"
-            BlueprintName = "ratelist"
-            ReferencedContainer = "container:ratelist.xcodeproj">
+            BuildableName = "RateList.app"
+            BlueprintName = "RateList"
+            ReferencedContainer = "container:RateList.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

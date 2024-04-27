@@ -1,17 +1,14 @@
-import { StyleSheet } from "react-native"
 import ItemComponent from "./Item"
-import { useNavigation } from "@react-navigation/native"
-import { StackNavigationProp } from "@react-navigation/stack"
 import useMyLists from "../hooks/useMyLists"
+import { navigationRef } from "../libs/navigationUtilities"
 
 export default function ListItem({ item }: { item: Item }) {
-  const { setSelectedListItem } = useMyLists()
-  const navigator = useNavigation<StackNavigationProp<RootStackParamList>>()
+	const { setSelectedListItem } = useMyLists()
 
-  const handleEdit = () => {
-    setSelectedListItem(item)
-    navigator.navigate("ItemEditor")
-  }
+	const handleEdit = () => {
+		setSelectedListItem(item)
+		navigationRef.navigate("ItemEditor")
+	}
 
-  return <ItemComponent item={item} onEdit={handleEdit} />
+	return <ItemComponent item={item} onEdit={handleEdit} />
 }

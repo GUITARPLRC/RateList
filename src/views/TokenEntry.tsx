@@ -3,14 +3,12 @@ import React, { useState } from "react"
 import { colors } from "../styles"
 import showToast from "../libs/toast"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
-import { useNavigation } from "@react-navigation/native"
-import { StackNavigationProp } from "@react-navigation/stack"
 import supabase from "../config/supabase"
+import { navigationRef } from "../libs/navigationUtilities"
 
 const TokenEntry = () => {
 	const [token, setToken] = useState("")
 	const insets = useSafeAreaInsets()
-	const navigator = useNavigation<StackNavigationProp<RootStackParamList>>()
 
 	const checkToken = async () => {
 		if (!token) {
@@ -33,7 +31,7 @@ const TokenEntry = () => {
 				return
 			}
 
-			navigator.navigate("ResetPassword", { data: data[0] })
+			navigationRef.navigate("ResetPassword", { data: data[0] })
 		} catch (error) {
 			if (error instanceof Error) {
 				console.error(error.message)
@@ -72,7 +70,7 @@ const TokenEntry = () => {
 			>
 				<Text style={styles.text}>Reset Password</Text>
 			</TouchableOpacity>
-			<Pressable style={{ alignItems: "center" }} onPress={() => navigator.navigate("Login")}>
+			<Pressable style={{ alignItems: "center" }} onPress={() => navigationRef.navigate("Login")}>
 				<Text style={styles.text}>Back To Login</Text>
 			</Pressable>
 		</View>

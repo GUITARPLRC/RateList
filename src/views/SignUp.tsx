@@ -3,17 +3,15 @@ import React, { useState } from "react"
 import { colors } from "../styles"
 import showToast from "../libs/toast"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
-import { useNavigation } from "@react-navigation/native"
-import { StackNavigationProp } from "@react-navigation/stack"
 import supabase from "../config/supabase"
 import Checkbox from "expo-checkbox"
 import { useLogin } from "../hooks/useLogin"
+import { navigationRef } from "../libs/navigationUtilities"
 
 const SignUp = () => {
 	const [email, setEmail] = useState("")
 	const [password, setPassword] = useState("")
 	const insets = useSafeAreaInsets()
-	const navigator = useNavigation<StackNavigationProp<RootStackParamList>>()
 	const [remember, setRemember] = useState(false)
 	const [busy, setBusy] = useState(false)
 	const { signIn } = useLogin()
@@ -36,7 +34,6 @@ const SignUp = () => {
 
 		// check if user already exists
 		const { data } = await supabase.from("users").select("*").eq("email", email.toLocaleLowerCase())
-
 
 		if (data && data.length > 0) {
 			showToast("User already exists. Please use forgot password or login.")
@@ -127,7 +124,7 @@ const SignUp = () => {
 			>
 				<Text style={styles.text}>Sign Up</Text>
 			</TouchableOpacity>
-			<Pressable style={{ alignItems: "center" }} onPress={() => navigator.navigate("Login")}>
+			<Pressable style={{ alignItems: "center" }} onPress={() => navigationRef.navigate("Login")}>
 				<Text style={styles.text}>Back To Login</Text>
 			</Pressable>
 		</View>

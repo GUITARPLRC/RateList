@@ -10,6 +10,8 @@ const Item = ({ item, onEdit }: { item: Item; onEdit: (arg: string) => void }) =
 	} | null>(null)
 	const { selectedList } = useMyLists()
 
+	// TODO: long press to confirm delete + haptic feedback
+
 	useEffect(() => {
 		setListTheme(themes[selectedList!.theme as keyof typeof themes])
 	}, [selectedList?.theme])

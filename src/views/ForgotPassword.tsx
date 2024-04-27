@@ -3,15 +3,13 @@ import React, { useState } from "react"
 import { colors } from "../styles"
 import showToast from "../libs/toast"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
-import { useNavigation } from "@react-navigation/native"
-import { StackNavigationProp } from "@react-navigation/stack"
 import generateSixToken from "../libs/generateSixToken"
 import supabase from "../config/supabase"
+import { navigationRef } from "../libs/navigationUtilities"
 
 const ForgotPassword = () => {
 	const [email, setEmail] = useState("")
 	const insets = useSafeAreaInsets()
-	const navigator = useNavigation<StackNavigationProp<RootStackParamList>>()
 
 	const sendForgot = async () => {
 		if (!email) {
@@ -70,7 +68,7 @@ const ForgotPassword = () => {
 			})
 			showToast("Check your email for a code.")
 
-			navigator.navigate("TokenEntry")
+			navigationRef.navigate("TokenEntry")
 		} catch (error) {
 			console.error(error)
 			showToast("Something went wrong")
@@ -107,7 +105,7 @@ const ForgotPassword = () => {
 					<Text style={styles.text}>Send Reset Email</Text>
 				</TouchableOpacity>
 			</View>
-			<Pressable style={{ alignItems: "center" }} onPress={() => navigator.navigate("Login")}>
+			<Pressable style={{ alignItems: "center" }} onPress={() => navigationRef.navigate("Login")}>
 				<Text style={styles.text}>Back To Login</Text>
 			</Pressable>
 		</View>

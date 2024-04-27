@@ -1,41 +1,18 @@
 import { TextInput, StyleSheet, View, Text, TouchableOpacity, Pressable } from "react-native"
-import React, { useEffect, useState } from "react"
-import Spinner from "react-native-loading-spinner-overlay"
-import { useLogin } from "../hooks/useLogin"
+import React, { useState } from "react"
 import { colors } from "../styles"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
-import { useNavigation } from "@react-navigation/native"
-import { StackNavigationProp } from "@react-navigation/stack"
 import Checkbox from "expo-checkbox"
-import AsyncStorage from "@react-native-async-storage/async-storage"
+import { useLogin } from "../hooks/useLogin"
+import { navigationRef } from "../libs/navigationUtilities"
+import Spinner from "react-native-loading-spinner-overlay"
 
 const Login = () => {
+	const { signIn, loading: loginLoading } = useLogin()
 	const [emailInputValue, setEmailInputValue] = useState("")
 	const [password, setPassword] = useState("")
-	const { handleSignIn, loading, signIn } = useLogin()
 	const insets = useSafeAreaInsets()
-	const navigator = useNavigation<StackNavigationProp<RootStackParamList>>()
 	const [remember, setRemember] = useState(false)
-
-	useEffect(() => {
-		const checkData = async () => {
-			const asyncRememberValue = await AsyncStorage.getItem("remember")
-			if (asyncRememberValue) {
-				const values = JSON.parse(asyncRememberValue)
-				try {
-					const success = await handleSignIn(values)
-					if (success) {
-						navigator.navigate("Home")
-					}
-				} catch (error) {
-					if (error instanceof Error) {
-						console.error(error.message)
-					}
-				}
-			}
-		}
-		checkData()
-	}, [])
 
 	return (
 		<View
@@ -49,7 +26,7 @@ const Login = () => {
 				},
 			]}
 		>
-			<Spinner visible={loading} />
+			<Spinner visible={loginLoading} />
 			<Text style={[styles.text, styles.titleText]}>RateList</Text>
 			<View>
 				<TextInput
@@ -82,7 +59,7 @@ const Login = () => {
 						<Text style={[styles.text, styles.smallText, { marginLeft: 5 }]}>Remember Me</Text>
 					</View>
 					<View>
-						<Pressable onPress={() => navigator.navigate("ForgotPassword")}>
+						<Pressable onPress={() => navigationRef.navigate("ForgotPassword")}>
 							<Text style={[styles.text, styles.smallText, styles.forgotPassword]}>
 								Forgot Password
 							</Text>
@@ -100,7 +77,7 @@ const Login = () => {
 				</TouchableOpacity>
 				<Pressable
 					style={{ alignItems: "center", marginTop: 30 }}
-					onPress={() => navigator.navigate("SignUp")}
+					onPress={() => navigationRef.navigate("SignUp")}
 				>
 					<Text style={styles.text}>Sign Up</Text>
 				</Pressable>

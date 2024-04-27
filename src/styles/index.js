@@ -6,6 +6,7 @@ export const colors = {
 	grey: "#333",
 	red: "#984b3a",
 	white: "#ddd",
+	orange: "#f25555",
 }
 
 export const themes = {

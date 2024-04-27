@@ -9,17 +9,14 @@ import {
 } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { useState } from "react"
-import { useNavigation } from "@react-navigation/native"
-import { StackNavigationProp } from "@react-navigation/stack"
 import useMyLists from "../hooks/useMyLists"
 import { colors } from "../styles"
 import { useListItems } from "../hooks/useListItems"
 import Confirmation from "../components/Confirmation"
 import showToast from "../libs/toast"
+import { navigationRef } from "../libs/navigationUtilities"
 
 export default function ItemEditor() {
-	const navigator = useNavigation<StackNavigationProp<RootStackParamList>>()
-
 	const { selectedListItem } = useMyLists()
 	const { updateListItem, deleteListItem } = useListItems()
 	const [title, setTitle] = useState(selectedListItem!.title)
@@ -39,12 +36,12 @@ export default function ItemEditor() {
 		}
 		await updateListItem(newItem)
 		showToast("Item updated")
-		navigator.navigate("List")
+		navigationRef.navigate("List")
 	}
 	const handleDelete = async () => {
 		await deleteListItem(selectedListItem!.id)
 		showToast("Item deleted")
-		navigator.navigate("List")
+		navigationRef.navigate("List")
 	}
 
 	const disabled =
@@ -65,7 +62,7 @@ export default function ItemEditor() {
 				},
 			]}
 		>
-			<Pressable hitSlop={10} onPress={() => navigator.goBack()}>
+			<Pressable hitSlop={10} onPress={() => navigationRef.goBack()}>
 				<Text style={[styles.text, { marginBottom: 20 }]}>Back</Text>
 			</Pressable>
 			<View

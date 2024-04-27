@@ -5,30 +5,28 @@ import { useBadges } from "../hooks/useBadges"
 import Badge from "./Badge"
 
 const Badges = () => {
-  const { badges } = useBadges()
+	const { badges } = useBadges()
 
-  if (!badges.length) return null
+	if (!badges.length) return null
 
-  return (
-    <View>
-      <Text style={[styles.text, { marginTop: 20, marginBottom: 15 }]}>
-        Achievements:
-      </Text>
-      <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 5 }}>
-        {badges.map((badge) => (
-          <Badge key={badge.type} badgeType={badge.type} />
-        ))}
-      </View>
-    </View>
-  )
+	return (
+		<View>
+			<Text style={[styles.text, { marginTop: 20, marginBottom: 15 }]}>Achievements</Text>
+			<View style={{ flexDirection: "row", flexWrap: "wrap", gap: 5 }}>
+				{badges.map((badge, index) => (
+					<Badge key={index} badgeType={badge.type} />
+				))}
+			</View>
+		</View>
+	)
 }
 
 const styles = StyleSheet.create({
-  text: {
-    color: colors.white,
-    fontFamily: "Gill Sans",
-    fontSize: 20,
-  },
+	text: {
+		color: colors.white,
+		fontFamily: "Gill Sans",
+		fontSize: 20,
+	},
 })
 
 export default Badges

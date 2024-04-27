@@ -14,8 +14,8 @@ import showToast from "../libs/toast"
 
 interface Props {
 	myLists: List[]
-	selectedList: List | null
-	setSelectedList: Dispatch<SetStateAction<List | null>>
+	selectedList: List | undefined | null
+	setSelectedList: Dispatch<SetStateAction<List | null | undefined>>
 	selectedListItem: Item | null
 	setSelectedListItem: Dispatch<SetStateAction<Item | null>>
 	updateList: (list: List) => Promise<void>
@@ -57,7 +57,7 @@ export function useMyLists() {
 export default function MyListsProvider({ children }: PropsWithChildren) {
 	const [myLists, setMyLists] = useState<List[]>([])
 	const [listData, setListData] = useState<List[]>([])
-	const [selectedList, setSelectedList] = useState<List | null>(null)
+	const [selectedList, setSelectedList] = useState<List | null | undefined>(null)
 	const [selectedListItem, setSelectedListItem] = useState<Item | null>(null)
 	const [loading, setLoading] = useState(false)
 	const { profile } = useAuth()

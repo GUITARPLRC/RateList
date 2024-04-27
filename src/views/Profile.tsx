@@ -7,12 +7,11 @@ import {
 	TouchableOpacity,
 	Image,
 	Dimensions,
+	ScrollView,
 } from "react-native"
 import supabase from "../config/supabase"
 import { useAuth } from "../context/auth"
 import Spinner from "react-native-loading-spinner-overlay"
-import { StackNavigationProp } from "@react-navigation/stack"
-import { useNavigation } from "@react-navigation/native"
 import { colors } from "../styles"
 import Badges from "../components/BadgeList"
 import { useBadges } from "../hooks/useBadges"
@@ -20,7 +19,8 @@ import Confirmation from "../components/Confirmation"
 import showToast from "../libs/toast"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import useMyLists from "../hooks/useMyLists"
-import { useSafeAreaInsets } from "react-native-safe-area-context"
+import { navigationRef } from "../libs/navigationUtilities"
+import { useNavigation } from "@react-navigation/native"
 
 export const avatars = {
 	bear: require("../../assets/avatars/bear.png"),
@@ -90,19 +90,26 @@ const Profile = () => {
 	const { profile, getProfile, clearProfile } = useAuth()
 	const [username, setUsername] = useState("")
 	const [userAvatar, setUserAvatar] = useState("")
-	const navigator = useNavigation<StackNavigationProp<RootStackParamList>>()
 	const { checkBadges, loading: badgesLoading } = useBadges()
 	const [confirmOpen, setConfirmOpen] = useState(false)
 	const { clearListData } = useMyLists()
 	const [confirmText, setConfirmText] = useState("")
-	const insets = useSafeAreaInsets()
+	const navigation = useNavigation()
 
 	useEffect(() => {
-		if (profile) {
-			setUsername(profile.username)
-			setUserAvatar(profile.avatar)
-		}
+		setUsername(profile?.username || "")
+		setUserAvatar(profile?.avatar || "")
 	}, [profile])
+
+	useEffect(() => {
+		navigation.setOptions({
+			headerRight: () => (
+				<TouchableOpacity onPress={updateProfile}>
+					<Text style={[styles.text, { marginRight: 20 }]}>Update</Text>
+				</TouchableOpacity>
+			),
+		})
+	}, [])
 
 	const signOut = async () => {
 		// clear data from context
@@ -112,7 +119,7 @@ const Profile = () => {
 		// remove email from async storage/ timeout perceive working / add call to stack trick
 		setTimeout(() => AsyncStorage.removeItem("email"), 1000)
 		// navigate to login
-		navigator.navigate("Login")
+		navigationRef.navigate("Login")
 	}
 
 	const updateProfile = async () => {
@@ -124,6 +131,8 @@ const Profile = () => {
 					username: username ? username : profile?.username,
 					avatar: userAvatar ? userAvatar : profile?.avatar,
 				}
+				console.log({ updates })
+				return
 				let { error } = await supabase.from("users").update([updates]).eq("email", profile.email)
 				if (error) {
 					if (error instanceof Error) {
@@ -160,20 +169,9 @@ const Profile = () => {
 	}
 
 	const screenWidth = Dimensions.get("window").width
-	const disabledUpdate = username === profile?.username && userAvatar === profile?.avatar
 
 	return (
-		<View
-			style={[
-				styles.container,
-				{
-					paddingTop: insets.top,
-					paddingLeft: insets.left === 0 ? 20 : insets.left,
-					paddingRight: insets.right === 0 ? 20 : insets.right,
-					paddingBottom: insets.bottom,
-				},
-			]}
-		>
+		<ScrollView style={[styles.container]}>
 			<Spinner visible={loading || badgesLoading} />
 			<Confirmation
 				isOpen={confirmOpen}
@@ -183,22 +181,8 @@ const Profile = () => {
 			/>
 			<View style={{ flex: 1, justifyContent: "space-between" }}>
 				<View>
-					<View
-						style={{
-							flexDirection: "row",
-							justifyContent: "space-between",
-							marginBottom: 20,
-						}}
-					>
-						<TouchableOpacity disabled={loading} onPress={() => navigator.goBack()}>
-							<Text style={styles.text}>Back to Lists</Text>
-						</TouchableOpacity>
-						<TouchableOpacity disabled={loading} onPress={() => setConfirmOpen(true)}>
-							<Text style={styles.text}>Sign Out</Text>
-						</TouchableOpacity>
-					</View>
 					<View style={{ marginBottom: 20 }}>
-						<Text style={[styles.text, { marginBottom: 10 }]}>Display Name:</Text>
+						<Text style={[styles.text, { marginBottom: 10 }]}>Display Name</Text>
 						<TextInput
 							style={styles.input}
 							onChangeText={setUsername}
@@ -208,7 +192,7 @@ const Profile = () => {
 							keyboardType="default"
 						/>
 					</View>
-					<Text style={styles.text}>Choose an avatar:</Text>
+					<Text style={styles.text}>Avatar</Text>
 					<View
 						style={{
 							flexDirection: "row",
@@ -247,36 +231,40 @@ const Profile = () => {
 								)
 							})}
 					</View>
-					<TouchableOpacity
-						disabled={loading || disabledUpdate}
-						onPress={() => updateProfile()}
-						style={[
-							styles.button,
-							{
-								opacity: loading || disabledUpdate ? 0.5 : 1,
-							},
-						]}
-					>
-						<Text style={styles.text}>Update</Text>
-					</TouchableOpacity>
 					<Badges />
 				</View>
+
 				<View>
-					<TouchableOpacity
-						onPress={() => {
-							setConfirmText("Are you sure you want to delete your account?")
-							setConfirmOpen(true)
-						}}
-						style={styles.buttonDanger}
-					>
-						<Text style={styles.text}>Delete Account</Text>
-					</TouchableOpacity>
+					<View>
+						<TouchableOpacity
+							onPress={() => {
+								setConfirmOpen(true)
+							}}
+							style={[styles.buttonDanger, { marginTop: 50 }]}
+						>
+							<Text style={styles.text}>Sign Out</Text>
+						</TouchableOpacity>
+					</View>
+					<View>
+						<TouchableOpacity
+							onPress={() => {
+								setConfirmText(
+									"Are you sure you want to DELETE of your data and account? This action is not reversible!",
+								)
+								setConfirmOpen(true)
+							}}
+						>
+							<Text style={{ ...styles.text, ...{ marginTop: 20, textAlign: "center" } }}>
+								Delete Account
+							</Text>
+						</TouchableOpacity>
+					</View>
 				</View>
+				<Text style={[styles.text, styles.smallText, { textAlign: "center", margin: 20 }]}>
+					{`v${require("../../package.json").version}`}
+				</Text>
 			</View>
-			<Text style={[styles.text, styles.smallText, { textAlign: "center", marginBottom: 20 }]}>
-				{`v${require("../../package.json").version}`}
-			</Text>
-		</View>
+		</ScrollView>
 	)
 }
 
@@ -284,6 +272,7 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		backgroundColor: colors.darkBackground,
+		padding: 20,
 	},
 	button: {
 		marginTop: 15,
