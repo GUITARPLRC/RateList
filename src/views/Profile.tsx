@@ -109,7 +109,7 @@ const Profile = () => {
 				</TouchableOpacity>
 			),
 		})
-	}, [])
+	}, [userAvatar, username])
 
 	const signOut = async () => {
 		// clear data from context
