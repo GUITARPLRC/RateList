@@ -15,7 +15,7 @@ import React, { useEffect, useLayoutEffect, useState } from "react"
 import { Pressable, StyleSheet, View, Text, Image } from "react-native"
 import { Feather } from "@expo/vector-icons"
 import { useAuth } from "../context/auth"
-import { Stack, Tab, navigationRef } from "../libs/navigationUtilities"
+import { Stack, Tab, authNavigationRef, navigationRef } from "../libs/navigationUtilities"
 import { useListItems } from "../hooks/useListItems"
 import useMyLists from "../hooks/useMyLists"
 
@@ -29,7 +29,7 @@ const renderBackButton = () => {
 
 const AuthStack = () => {
 	return (
-		<NavigationContainer independent>
+		<NavigationContainer independent ref={authNavigationRef}>
 			<Stack.Navigator
 				screenOptions={{
 					gestureEnabled: false,

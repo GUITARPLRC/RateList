@@ -5,7 +5,7 @@ import showToast from "../libs/toast"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import generateSixToken from "../libs/generateSixToken"
 import supabase from "../config/supabase"
-import { navigationRef } from "../libs/navigationUtilities"
+import { authNavigationRef } from "../libs/navigationUtilities"
 
 const ForgotPassword = () => {
 	const [email, setEmail] = useState("")
@@ -68,7 +68,7 @@ const ForgotPassword = () => {
 			})
 			showToast("Check your email for a code.")
 
-			navigationRef.navigate("TokenEntry")
+			authNavigationRef.navigate("TokenEntry")
 		} catch (error) {
 			console.error(error)
 			showToast("Something went wrong")
@@ -105,7 +105,10 @@ const ForgotPassword = () => {
 					<Text style={styles.text}>Send Reset Email</Text>
 				</TouchableOpacity>
 			</View>
-			<Pressable style={{ alignItems: "center" }} onPress={() => navigationRef.navigate("Login")}>
+			<Pressable
+				style={{ alignItems: "center" }}
+				onPress={() => authNavigationRef.navigate("Login")}
+			>
 				<Text style={styles.text}>Back To Login</Text>
 			</Pressable>
 		</View>

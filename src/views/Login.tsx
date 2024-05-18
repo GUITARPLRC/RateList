@@ -4,7 +4,7 @@ import { colors } from "../styles"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import Checkbox from "expo-checkbox"
 import { useLogin } from "../hooks/useLogin"
-import { navigationRef } from "../libs/navigationUtilities"
+import { authNavigationRef } from "../libs/navigationUtilities"
 import Spinner from "react-native-loading-spinner-overlay"
 
 const Login = () => {
@@ -59,7 +59,7 @@ const Login = () => {
 						<Text style={[styles.text, styles.smallText, { marginLeft: 5 }]}>Remember Me</Text>
 					</View>
 					<View>
-						<Pressable onPress={() => navigationRef.navigate("ForgotPassword")}>
+						<Pressable onPress={() => authNavigationRef.navigate("ForgotPassword")}>
 							<Text style={[styles.text, styles.smallText, styles.forgotPassword]}>
 								Forgot Password
 							</Text>
@@ -77,7 +77,7 @@ const Login = () => {
 				</TouchableOpacity>
 				<Pressable
 					style={{ alignItems: "center", marginTop: 30 }}
-					onPress={() => navigationRef.navigate("SignUp")}
+					onPress={() => authNavigationRef.navigate("SignUp")}
 				>
 					<Text style={styles.text}>Sign Up</Text>
 				</Pressable>

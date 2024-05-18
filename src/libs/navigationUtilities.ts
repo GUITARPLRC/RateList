@@ -6,3 +6,4 @@ export const Stack = createNativeStackNavigator<RootStackParamList>()
 export const Tab = createBottomTabNavigator<RootStackParamList>()
 
 export const navigationRef = createNavigationContainerRef<RootStackParamList>()
+export const authNavigationRef = createNavigationContainerRef<RootStackParamList>()

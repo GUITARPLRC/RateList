@@ -118,8 +118,6 @@ const Profile = () => {
 		clearProfile()
 		// remove email from async storage/ timeout perceive working / add call to stack trick
 		setTimeout(() => AsyncStorage.removeItem("email"), 1000)
-		// navigate to login
-		navigationRef.navigate("Login")
 	}
 
 	const updateProfile = async () => {
@@ -131,8 +129,6 @@ const Profile = () => {
 					username: username ? username : profile?.username,
 					avatar: userAvatar ? userAvatar : profile?.avatar,
 				}
-				console.log({ updates })
-				return
 				let { error } = await supabase.from("users").update([updates]).eq("email", profile.email)
 				if (error) {
 					if (error instanceof Error) {

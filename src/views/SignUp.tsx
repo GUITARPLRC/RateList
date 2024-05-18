@@ -6,7 +6,8 @@ import { useSafeAreaInsets } from "react-native-safe-area-context"
 import supabase from "../config/supabase"
 import Checkbox from "expo-checkbox"
 import { useLogin } from "../hooks/useLogin"
-import { navigationRef } from "../libs/navigationUtilities"
+import { authNavigationRef } from "../libs/navigationUtilities"
+import Spinner from "react-native-loading-spinner-overlay"
 
 const SignUp = () => {
 	const [email, setEmail] = useState("")
@@ -22,6 +23,7 @@ const SignUp = () => {
 
 		if (!email || !password) {
 			showToast("Please enter an email and password")
+			setBusy(false)
 			return
 		}
 
@@ -29,17 +31,17 @@ const SignUp = () => {
 		const emailRegex = /\S+@\S+\.\S+/
 		if (!emailRegex.test(email)) {
 			showToast("Please enter a valid email")
+			setBusy(false)
 			return
 		}
 
 		// check if user already exists
 		const { data } = await supabase.from("users").select("*").eq("email", email.toLocaleLowerCase())
-
 		if (data && data.length > 0) {
 			showToast("User already exists. Please use forgot password or login.")
+			setBusy
 			return
 		}
-		return
 
 		const { error } = await supabase
 			.from("users")
@@ -48,6 +50,7 @@ const SignUp = () => {
 		if (error) {
 			console.error(error)
 			showToast("Something went wrong")
+			setBusy(false)
 			return
 		}
 
@@ -56,18 +59,25 @@ const SignUp = () => {
 		const emailjsParams = {
 			account: email,
 		}
-		fetch("https://api.emailjs.com/api/v1.0/email/send", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({
-				service_id: "service_xtkchaz",
-				template_id: "template_2ewriek",
-				user_id: "w0on1dwNj7pYOLeCd",
-				template_params: emailjsParams,
-			}),
-		})
+		try {
+			fetch("https://api.emailjs.com/api/v1.0/email/send", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					service_id: "service_xtkchaz",
+					template_id: "template_2ewriek",
+					user_id: "w0on1dwNj7pYOLeCd",
+					template_params: emailjsParams,
+				}),
+			})
+		} catch (error) {
+			console.error(error)
+			showToast("Something went wrong")
+			setBusy(false)
+			return
+		}
 		setBusy(false)
 		showToast("A New User 😮 Welcome!")
 		signIn(email, password, remember)
@@ -86,6 +96,7 @@ const SignUp = () => {
 			]}
 		>
 			<Text style={[styles.text, styles.titleText]}>Sign Up</Text>
+			<Spinner visible={busy} />
 			<View>
 				<TextInput
 					style={styles.input}
@@ -124,7 +135,10 @@ const SignUp = () => {
 			>
 				<Text style={styles.text}>Sign Up</Text>
 			</TouchableOpacity>
-			<Pressable style={{ alignItems: "center" }} onPress={() => navigationRef.navigate("Login")}>
+			<Pressable
+				style={{ alignItems: "center" }}
+				onPress={() => authNavigationRef.navigate("Login")}
+			>
 				<Text style={styles.text}>Back To Login</Text>
 			</Pressable>
 		</View>
