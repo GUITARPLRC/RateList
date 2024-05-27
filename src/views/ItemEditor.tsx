@@ -1,4 +1,4 @@
-import { View, TextInput, StyleSheet, TouchableOpacity, Text, Pressable } from "react-native"
+import { View, TextInput, StyleSheet, Text, Pressable } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { useLayoutEffect, useState } from "react"
 import useMyLists from "../hooks/useMyLists"
@@ -20,25 +20,25 @@ export default function ItemEditor() {
 	const [rating, setRating] = useState(selectedListItem!.rating)
 	const insets = useSafeAreaInsets()
 	const [confirmationOpen, setConfirmationOpen] = useState(false)
+	const navigation = useNavigation()
 
+	useLayoutEffect(() => {
+		navigation.setOptions({
+			headerRight: () => {
+				return (
+					<View style={styles.listRightHeader}>
+						<Pressable onPress={() => setConfirmationOpen(true)} style={{ marginRight: 20 }}>
+							<Entypo name="trash" size={20} color="#fff" />
+						</Pressable>
+						<Pressable onPress={handleSave} style={{ marginRight: 20 }}>
+							<Text style={styles.text}>Save</Text>
+						</Pressable>
+					</View>
+				)
+			},
+		})
+	}, [])
 	const handleSave = async () => {
-		const navigation = useNavigation()
-		useLayoutEffect(() => {
-			navigation.setOptions({
-				headerRight: () => {
-					return (
-						<View>
-							<Pressable style={{ marginRight: 20 }}>
-								<Entypo name="trash" size={20} color="#fff" />
-							</Pressable>
-							<Pressable onPress={() => {}} style={{ marginRight: 20 }}>
-								Save
-							</Pressable>
-						</View>
-					)
-				},
-			})
-		}, [])
 		const newItem = {
 			...selectedListItem!,
 			title,
@@ -51,6 +51,7 @@ export default function ItemEditor() {
 		navigationRef.navigate("List")
 	}
 	const handleDelete = async () => {
+		setConfirmationOpen(false)
 		await deleteListItem(selectedListItem!.id)
 		showToast("Item deleted")
 		navigationRef.navigate("List")
@@ -163,16 +164,6 @@ export default function ItemEditor() {
 					keyboardType="default"
 				/>
 			</View>
-			<TouchableOpacity
-				onPress={handleSave}
-				style={[styles.button, { opacity: disabled ? 0.5 : 1 }]}
-				disabled={disabled}
-			>
-				<Text style={styles.text}>Save</Text>
-			</TouchableOpacity>
-			<TouchableOpacity onPress={() => setConfirmationOpen(true)} style={styles.buttonDanger}>
-				<Text style={styles.text}>Delete</Text>
-			</TouchableOpacity>
 			<Confirmation
 				isOpen={confirmationOpen}
 				onClose={() => setConfirmationOpen(false)}
@@ -236,5 +227,10 @@ const styles = StyleSheet.create({
 	selectedRating: {
 		backgroundColor: colors.green,
 		borderRadius: 40,
+	},
+	listRightHeader: {
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "space-between",
 	},
 })

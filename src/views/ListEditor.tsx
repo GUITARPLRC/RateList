@@ -8,7 +8,7 @@ import { navigationRef } from "../libs/navigationUtilities"
 import { useNavigation } from "@react-navigation/native"
 
 export default function ListEditor() {
-	const { selectedList, updateList, deleteList, createList, setSelectedList } = useMyLists()
+	const { selectedList, updateList, createList, setSelectedList } = useMyLists()
 	const [title, setTitle] = useState(selectedList?.title || "")
 	const [theme, setTheme] = useState(selectedList?.theme || "green")
 	const navigation = useNavigation()
@@ -26,7 +26,7 @@ export default function ListEditor() {
 		handleNewList()
 		navigation.setOptions({
 			headerRight: () => (
-				<Pressable onPress={() => handleSave()} style={{ marginRight: 20 }}>
+				<Pressable onPress={handleSave} style={{ marginRight: 20 }}>
 					<Text style={styles.text}>Save</Text>
 				</Pressable>
 			),

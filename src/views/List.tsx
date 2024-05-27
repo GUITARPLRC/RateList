@@ -7,7 +7,7 @@ import { useListItems } from "../hooks/useListItems"
 import ListItem from "../components/ListItem"
 import { colors } from "../styles"
 import Search from "../components/Search"
-import { Feather, Entypo } from "@expo/vector-icons"
+import { Entypo } from "@expo/vector-icons"
 import { navigationRef } from "../libs/navigationUtilities"
 import { useActionSheet } from "@expo/react-native-action-sheet"
 import Confirmation from "../components/Confirmation"
@@ -87,7 +87,7 @@ const List = () => {
 						<Entypo name="dots-three-vertical" size={20} color="#fff" />
 					</Pressable>
 					<Pressable onPress={handleAddListItem} style={{ marginRight: 20 }}>
-						<Feather name="plus" size={30} color="#fff" />
+						<Entypo name="plus" size={30} color="#fff" />
 					</Pressable>
 				</View>
 			),

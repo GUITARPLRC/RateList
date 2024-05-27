@@ -13,7 +13,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage"
 import { useLogin } from "../hooks/useLogin"
 import React, { useLayoutEffect, useState } from "react"
 import { Pressable, StyleSheet, View, Text, Image } from "react-native"
-import { Feather, Entypo } from "@expo/vector-icons"
+import { Entypo } from "@expo/vector-icons"
 import { useAuth } from "../context/auth"
 import { Stack, Tab, authNavigationRef, navigationRef } from "../libs/navigationUtilities"
 import useMyLists from "../hooks/useMyLists"
@@ -25,7 +25,7 @@ const renderBackButton = (screen?: "Home") => {
 			onPress={() => (screen ? navigationRef.navigate(screen) : goBack())}
 			style={{ marginLeft: 20 }}
 		>
-			<Feather name="arrow-left" size={30} color="#fff" />
+			<Entypo name="arrow-left" size={30} color="#fff" />
 		</Pressable>
 	)
 }
@@ -68,11 +68,7 @@ const CustomTabs = ({ state }: any) => {
 				}}
 			>
 				{/* home icon */}
-				<Feather
-					name="home"
-					size={25}
-					color={focusedOptions.name === "Home" ? "#f25555" : "#fff"}
-				/>
+				<Entypo name="home" size={25} color={focusedOptions.name === "Home" ? "#f25555" : "#fff"} />
 				<Text
 					style={{ ...styles.tabLabel, color: focusedOptions.name === "Home" ? "#f25555" : "#fff" }}
 				>
@@ -90,7 +86,7 @@ const CustomTabs = ({ state }: any) => {
 						style={{ width: 30, height: 30 }}
 					/>
 				) : (
-					<Feather
+					<Entypo
 						name="user"
 						size={30}
 						color={focusedOptions.name === "Profile" ? "#f25555" : "#fff"}
@@ -151,7 +147,7 @@ const MainStack = () => {
 									}}
 									style={{ marginRight: 20 }}
 								>
-									<Feather name="plus" size={30} color="#fff" />
+									<Entypo name="plus" size={30} color="#fff" />
 								</Pressable>
 							)
 						},
@@ -170,18 +166,6 @@ const MainStack = () => {
 					options={{
 						title: "Edit List",
 						headerLeft: () => renderBackButton(),
-						headerRight: () => {
-							return (
-								<View>
-									<Pressable style={{ marginRight: 20 }}>
-										<Entypo name="dots-three-vertical" size={20} color="#fff" />
-									</Pressable>
-									<Pressable onPress={() => handleAddListItem()} style={{ marginRight: 20 }}>
-										<Text style={{ color: "#fff" }}>Save</Text>
-									</Pressable>
-								</View>
-							)
-						},
 					}}
 				/>
 				<Tab.Screen
