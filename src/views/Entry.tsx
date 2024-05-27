@@ -8,20 +8,23 @@ import ResetPassword from "./ResetPassword"
 import SignUp from "./SignUp"
 import ForgotPassword from "./ForgotPassword"
 import TokenEntry from "./TokenEntry"
-import { NavigationContainer } from "@react-navigation/native"
+import { NavigationContainer, useNavigation } from "@react-navigation/native"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { useLogin } from "../hooks/useLogin"
-import React, { useEffect, useLayoutEffect, useState } from "react"
+import React, { useLayoutEffect, useState } from "react"
 import { Pressable, StyleSheet, View, Text, Image } from "react-native"
-import { Feather } from "@expo/vector-icons"
+import { Feather, Entypo } from "@expo/vector-icons"
 import { useAuth } from "../context/auth"
 import { Stack, Tab, authNavigationRef, navigationRef } from "../libs/navigationUtilities"
-import { useListItems } from "../hooks/useListItems"
 import useMyLists from "../hooks/useMyLists"
 
-const renderBackButton = () => {
+const renderBackButton = (screen?: "Home") => {
+	const { goBack } = useNavigation()
 	return (
-		<Pressable onPress={() => navigationRef?.goBack()} style={{ marginLeft: 20 }}>
+		<Pressable
+			onPress={() => (screen ? navigationRef.navigate(screen) : goBack())}
+			style={{ marginLeft: 20 }}
+		>
 			<Feather name="arrow-left" size={30} color="#fff" />
 		</Pressable>
 	)
@@ -67,7 +70,7 @@ const CustomTabs = ({ state }: any) => {
 				{/* home icon */}
 				<Feather
 					name="home"
-					size={30}
+					size={25}
 					color={focusedOptions.name === "Home" ? "#f25555" : "#fff"}
 				/>
 				<Text
@@ -99,7 +102,11 @@ const CustomTabs = ({ state }: any) => {
 						color: focusedOptions.name === "Profile" ? "#f25555" : "#fff",
 					}}
 				>
-					Profile
+					{profile?.username
+						? profile.username.length > 10
+							? `${profile.username.substring(0, 10)}...`
+							: profile.username
+						: "Profile"}
 				</Text>
 			</Pressable>
 		</View>
@@ -107,22 +114,12 @@ const CustomTabs = ({ state }: any) => {
 }
 
 const MainStack = () => {
-	const { setSelectedListItem, setSelectedList } = useMyLists()
-	const { addListItem } = useListItems()
-	const handleAddListItem = async () => {
-		const newItem = {
-			title: "",
-			description: "",
-		}
-		const newListItem = await addListItem(newItem)
-		if (!newListItem) return
-		setSelectedListItem(newListItem)
-		navigationRef.navigate("ItemEditor")
-	}
+	const { setSelectedList } = useMyLists()
 
 	return (
 		<NavigationContainer independent ref={navigationRef}>
 			<Tab.Navigator
+				backBehavior="history"
 				screenOptions={{
 					headerStyle: {
 						backgroundColor: "#000",
@@ -165,18 +162,6 @@ const MainStack = () => {
 					component={List}
 					options={{
 						headerLeft: () => renderBackButton(),
-						headerRight: () => {
-							return (
-								<View style={styles.listRightHeader}>
-									<Pressable style={{ marginRight: 20 }}>
-										<Feather name="more-horizontal" size={30} color="#fff" />
-									</Pressable>
-									<Pressable onPress={() => handleAddListItem()} style={{ marginRight: 20 }}>
-										<Feather name="plus" size={30} color="#fff" />
-									</Pressable>
-								</View>
-							)
-						},
 					}}
 				/>
 				<Tab.Screen
@@ -187,9 +172,9 @@ const MainStack = () => {
 						headerLeft: () => renderBackButton(),
 						headerRight: () => {
 							return (
-								<View style={styles.listRightHeader}>
+								<View>
 									<Pressable style={{ marginRight: 20 }}>
-										<Feather name="more-horizontal" size={30} color="#fff" />
+										<Entypo name="dots-three-vertical" size={20} color="#fff" />
 									</Pressable>
 									<Pressable onPress={() => handleAddListItem()} style={{ marginRight: 20 }}>
 										<Text style={{ color: "#fff" }}>Save</Text>
@@ -199,12 +184,16 @@ const MainStack = () => {
 						},
 					}}
 				/>
-				<Tab.Screen name="ItemEditor" component={ItemEditor} options={{ title: "Edit Item" }} />
+				<Tab.Screen
+					name="ItemEditor"
+					component={ItemEditor}
+					options={{ title: "Edit Item", headerLeft: () => renderBackButton() }}
+				/>
 				<Tab.Screen
 					name="Profile"
 					component={Profile}
 					options={{
-						headerLeft: () => renderBackButton(),
+						headerLeft: () => renderBackButton("Home"),
 					}}
 				/>
 			</Tab.Navigator>
@@ -253,10 +242,5 @@ const styles = StyleSheet.create({
 	tabLabel: {
 		color: "#ccc",
 		marginTop: 10,
-	},
-	listRightHeader: {
-		flexDirection: "row",
-		alignItems: "center",
-		justifyContent: "space-between",
 	},
 })

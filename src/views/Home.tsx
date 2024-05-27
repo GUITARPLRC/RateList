@@ -1,4 +1,4 @@
-import { ScrollView, Pressable, Text, StyleSheet, View } from "react-native"
+import { Pressable, Text, StyleSheet, View, Button } from "react-native"
 import React, { useCallback } from "react"
 import { LinearGradient } from "expo-linear-gradient"
 import { useFocusEffect } from "@react-navigation/native"
@@ -9,6 +9,8 @@ import { colors, themes } from "../styles"
 import Search from "../components/Search"
 import { navigationRef } from "../libs/navigationUtilities"
 
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
+
 export default function Home() {
 	const {
 		myLists,
@@ -17,6 +19,7 @@ export default function Home() {
 		setSelectedList,
 		searchValue,
 		setSearchValue,
+		createList,
 	} = useMyLists()
 	const { profile, loading: userLoading } = useAuth()
 
@@ -30,15 +33,14 @@ export default function Home() {
 		setSelectedList(list)
 		navigationRef.navigate("List")
 	}
-
+	const isLoading = listLoading || userLoading
 	return (
 		<View style={[styles.container]}>
-			<Spinner visible={listLoading || userLoading} />
+			<Spinner visible={isLoading} />
 			<View style={[styles.margin]}>
 				<Search searchValue={searchValue} setSearchValue={setSearchValue} />
 			</View>
-			<ScrollView>
-				{/* TODO: handle no lists - empty view */}
+			<KeyboardAwareScrollView>
 				{myLists.length ? (
 					myLists.map((list) => (
 						<LinearGradient
@@ -57,10 +59,19 @@ export default function Home() {
 						</LinearGradient>
 					))
 				) : (
-					// TODO: add create list button
-					<Text style={styles.text}>Create A List!</Text>
+					<View style={styles.noListContainer}>
+						{!isLoading ? (
+							<>
+								<Text style={[styles.text, styles.noListText]}>
+									Get started creating a List with the + button at the top or pressing the button
+									below
+								</Text>
+								<Button title="Add List" onPress={createList} />
+							</>
+						) : null}
+					</View>
 				)}
-			</ScrollView>
+			</KeyboardAwareScrollView>
 		</View>
 	)
 }
@@ -108,5 +119,14 @@ const styles = StyleSheet.create({
 		justifyContent: "flex-end",
 		width: "100%",
 		padding: 10,
+	},
+	noListContainer: {
+		flex: 1,
+		justifyContent: "center",
+		alignItems: "center",
+		minHeight: "100%",
+	},
+	noListText: {
+		fontSize: 20,
 	},
 })

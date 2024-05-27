@@ -9,8 +9,8 @@ import Spinner from "react-native-loading-spinner-overlay"
 
 const Login = () => {
 	const { signIn, loading: loginLoading } = useLogin()
-	const [emailInputValue, setEmailInputValue] = useState("")
-	const [password, setPassword] = useState("")
+	const [emailInputValue, setEmailInputValue] = useState("test@chuckreynolds.dev")
+	const [password, setPassword] = useState("123")
 	const insets = useSafeAreaInsets()
 	const [remember, setRemember] = useState(false)
 

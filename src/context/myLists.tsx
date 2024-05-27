@@ -29,7 +29,7 @@ interface Props {
 }
 
 const DEFAULT_LIST: Partial<List> = {
-	title: "",
+	title: "New List",
 	theme: "green",
 	description: "",
 }

@@ -1,20 +1,15 @@
-import {
-	View,
-	TextInput,
-	StyleSheet,
-	TouchableOpacity,
-	Text,
-	Pressable,
-	ScrollView,
-} from "react-native"
+import { View, TextInput, StyleSheet, TouchableOpacity, Text, Pressable } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
-import { useState } from "react"
+import { useLayoutEffect, useState } from "react"
 import useMyLists from "../hooks/useMyLists"
 import { colors } from "../styles"
 import { useListItems } from "../hooks/useListItems"
 import Confirmation from "../components/Confirmation"
 import showToast from "../libs/toast"
 import { navigationRef } from "../libs/navigationUtilities"
+import { useNavigation } from "@react-navigation/native"
+import { Entypo } from "@expo/vector-icons"
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
 
 export default function ItemEditor() {
 	const { selectedListItem } = useMyLists()
@@ -27,6 +22,23 @@ export default function ItemEditor() {
 	const [confirmationOpen, setConfirmationOpen] = useState(false)
 
 	const handleSave = async () => {
+		const navigation = useNavigation()
+		useLayoutEffect(() => {
+			navigation.setOptions({
+				headerRight: () => {
+					return (
+						<View>
+							<Pressable style={{ marginRight: 20 }}>
+								<Entypo name="trash" size={20} color="#fff" />
+							</Pressable>
+							<Pressable onPress={() => {}} style={{ marginRight: 20 }}>
+								Save
+							</Pressable>
+						</View>
+					)
+				},
+			})
+		}, [])
 		const newItem = {
 			...selectedListItem!,
 			title,
@@ -51,7 +63,7 @@ export default function ItemEditor() {
 		subTitle === selectedListItem!.subTitle
 
 	return (
-		<ScrollView
+		<KeyboardAwareScrollView
 			style={[
 				styles.container,
 				{
@@ -62,9 +74,6 @@ export default function ItemEditor() {
 				},
 			]}
 		>
-			<Pressable hitSlop={10} onPress={() => navigationRef.goBack()}>
-				<Text style={[styles.text, { marginBottom: 20 }]}>Back</Text>
-			</Pressable>
 			<View
 				style={{
 					marginBottom: 20,
@@ -170,7 +179,7 @@ export default function ItemEditor() {
 				confirmText="Are you sure you want to delete this item?"
 				onConfirm={handleDelete}
 			/>
-		</ScrollView>
+		</KeyboardAwareScrollView>
 	)
 }
 

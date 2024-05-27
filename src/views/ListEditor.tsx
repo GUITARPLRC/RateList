@@ -1,9 +1,8 @@
-import { View, TextInput, StyleSheet, TouchableOpacity, Text, Pressable } from "react-native"
-import { useEffect, useLayoutEffect, useState } from "react"
+import { View, TextInput, StyleSheet, Text, Pressable } from "react-native"
+import { useLayoutEffect, useState } from "react"
 import { Picker } from "@react-native-picker/picker"
 import useMyLists from "../hooks/useMyLists"
 import { colors, themes } from "../styles"
-import Confirmation from "../components/Confirmation"
 import showToast from "../libs/toast"
 import { navigationRef } from "../libs/navigationUtilities"
 import { useNavigation } from "@react-navigation/native"
@@ -12,7 +11,6 @@ export default function ListEditor() {
 	const { selectedList, updateList, deleteList, createList, setSelectedList } = useMyLists()
 	const [title, setTitle] = useState(selectedList?.title || "")
 	const [theme, setTheme] = useState(selectedList?.theme || "green")
-	const [confirmationOpen, setConfirmationOpen] = useState(false)
 	const navigation = useNavigation()
 
 	const handleNewList = async () => {
@@ -24,7 +22,7 @@ export default function ListEditor() {
 		}
 	}
 
-	useEffect(() => {
+	useLayoutEffect(() => {
 		handleNewList()
 		navigation.setOptions({
 			headerRight: () => (
@@ -45,12 +43,6 @@ export default function ListEditor() {
 		await updateList(newList)
 		showToast("List updated")
 		navigationRef.navigate("List")
-	}
-
-	const handleDelete = async () => {
-		await deleteList()
-		showToast("List deleted")
-		navigationRef.navigate("Home")
 	}
 
 	return (
@@ -80,15 +72,6 @@ export default function ListEditor() {
 					))}
 				</Picker>
 			</View>
-			<TouchableOpacity onPress={() => setConfirmationOpen(true)} style={styles.buttonDanger}>
-				<Text style={styles.text}>Delete</Text>
-			</TouchableOpacity>
-			<Confirmation
-				isOpen={confirmationOpen}
-				onClose={() => setConfirmationOpen(false)}
-				confirmText="Are you sure you want to delete this list?"
-				onConfirm={handleDelete}
-			/>
 		</View>
 	)
 }

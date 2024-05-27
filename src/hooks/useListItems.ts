@@ -68,14 +68,14 @@ export const useListItems = () => {
 		}
 	}
 
-	const addListItem = async (item: Partial<Item>): Promise<Item | undefined> => {
+	const addListItem = async (): Promise<Item | undefined> => {
 		let newItemData = null
 		if (loading || !selectedList?.id) return
 		try {
 			setLoading(true)
 			const { data, error } = await supabase
 				.from("listitems")
-				.insert([{ ...item, listId: selectedList.id }])
+				.insert([{ title: "New List Item", description: "", listId: selectedList.id }])
 				.select()
 			if (data) {
 				newItemData = data[0]

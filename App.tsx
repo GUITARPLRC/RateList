@@ -9,6 +9,7 @@ import { ModalPortal } from "react-native-modals"
 import { RootSiblingParent } from "react-native-root-siblings"
 import { useState, useEffect, useCallback } from "react"
 import * as SplashScreen from "expo-splash-screen"
+import { ActionSheetProvider } from "@expo/react-native-action-sheet"
 
 // Keep the splash screen visible while we fetch resources
 SplashScreen.preventAutoHideAsync()
@@ -54,7 +55,9 @@ export default function App() {
 					<AuthProvider>
 						<MyListsProvider>
 							<NavigationContainer>
-								<Entry />
+								<ActionSheetProvider>
+									<Entry />
+								</ActionSheetProvider>
 								<ModalPortal />
 							</NavigationContainer>
 						</MyListsProvider>

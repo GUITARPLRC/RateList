@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useLayoutEffect, useState } from "react"
 import {
 	Text,
 	View,
@@ -7,7 +7,6 @@ import {
 	TouchableOpacity,
 	Image,
 	Dimensions,
-	ScrollView,
 } from "react-native"
 import supabase from "../config/supabase"
 import { useAuth } from "../context/auth"
@@ -19,8 +18,8 @@ import Confirmation from "../components/Confirmation"
 import showToast from "../libs/toast"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import useMyLists from "../hooks/useMyLists"
-import { navigationRef } from "../libs/navigationUtilities"
 import { useNavigation } from "@react-navigation/native"
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
 
 export const avatars = {
 	bear: require("../../assets/avatars/bear.png"),
@@ -101,7 +100,7 @@ const Profile = () => {
 		setUserAvatar(profile?.avatar || "")
 	}, [profile])
 
-	useEffect(() => {
+	useLayoutEffect(() => {
 		navigation.setOptions({
 			headerRight: () => (
 				<TouchableOpacity onPress={updateProfile}>
@@ -167,7 +166,7 @@ const Profile = () => {
 	const screenWidth = Dimensions.get("window").width
 
 	return (
-		<ScrollView style={[styles.container]}>
+		<KeyboardAwareScrollView style={[styles.container]}>
 			<Spinner visible={loading || badgesLoading} />
 			<Confirmation
 				isOpen={confirmOpen}
@@ -260,7 +259,7 @@ const Profile = () => {
 					{`v${require("../../package.json").version}`}
 				</Text>
 			</View>
-		</ScrollView>
+		</KeyboardAwareScrollView>
 	)
 }
 
