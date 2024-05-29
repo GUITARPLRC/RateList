@@ -18,7 +18,7 @@ import { useAuth } from "../context/auth"
 import { Stack, Tab, authNavigationRef, navigationRef } from "../libs/navigationUtilities"
 import useMyLists from "../hooks/useMyLists"
 
-const renderBackButton = (screen?: "Home") => {
+const renderBackButton = (screen?: "Home" | "List") => {
 	const { goBack } = useNavigation()
 	return (
 		<Pressable
@@ -110,7 +110,7 @@ const CustomTabs = ({ state }: any) => {
 }
 
 const MainStack = () => {
-	const { setSelectedList } = useMyLists()
+	const { createList } = useMyLists()
 
 	return (
 		<NavigationContainer independent ref={navigationRef}>
@@ -140,13 +140,7 @@ const MainStack = () => {
 						title: "My Lists",
 						headerRight: () => {
 							return (
-								<Pressable
-									onPress={() => {
-										setSelectedList(null)
-										navigationRef?.navigate("ListEditor")
-									}}
-									style={{ marginRight: 20 }}
-								>
+								<Pressable onPress={createList} style={{ marginRight: 20 }}>
 									<Entypo name="plus" size={30} color="#fff" />
 								</Pressable>
 							)
@@ -157,7 +151,7 @@ const MainStack = () => {
 					name="List"
 					component={List}
 					options={{
-						headerLeft: () => renderBackButton(),
+						headerLeft: () => renderBackButton("Home"),
 					}}
 				/>
 				<Tab.Screen
@@ -165,13 +159,13 @@ const MainStack = () => {
 					component={ListEditor}
 					options={{
 						title: "Edit List",
-						headerLeft: () => renderBackButton(),
+						headerLeft: () => renderBackButton("List"),
 					}}
 				/>
 				<Tab.Screen
 					name="ItemEditor"
 					component={ItemEditor}
-					options={{ title: "Edit Item", headerLeft: () => renderBackButton() }}
+					options={{ title: "Edit Item", headerLeft: () => renderBackButton("List") }}
 				/>
 				<Tab.Screen
 					name="Profile"

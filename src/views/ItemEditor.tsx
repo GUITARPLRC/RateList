@@ -1,6 +1,6 @@
 import { View, TextInput, StyleSheet, Text, Pressable } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
-import { useLayoutEffect, useState } from "react"
+import { useEffect, useLayoutEffect, useState } from "react"
 import useMyLists from "../hooks/useMyLists"
 import { colors } from "../styles"
 import { useListItems } from "../hooks/useListItems"
@@ -37,7 +37,15 @@ export default function ItemEditor() {
 				)
 			},
 		})
-	}, [])
+	}, [title, description, rating, subTitle, selectedListItem?.id])
+
+	useEffect(() => {
+		setTitle(selectedListItem!.title)
+		setSubTitle(selectedListItem!.subTitle)
+		setDescription(selectedListItem!.description)
+		setRating(selectedListItem!.rating)
+	}, [selectedListItem?.id])
+
 	const handleSave = async () => {
 		const newItem = {
 			...selectedListItem!,
@@ -50,18 +58,13 @@ export default function ItemEditor() {
 		showToast("Item updated")
 		navigationRef.navigate("List")
 	}
+
 	const handleDelete = async () => {
 		setConfirmationOpen(false)
 		await deleteListItem(selectedListItem!.id)
 		showToast("Item deleted")
 		navigationRef.navigate("List")
 	}
-
-	const disabled =
-		title === selectedListItem!.title &&
-		description === selectedListItem!.description &&
-		rating === selectedListItem!.rating &&
-		subTitle === selectedListItem!.subTitle
 
 	return (
 		<KeyboardAwareScrollView
@@ -202,7 +205,6 @@ const styles = StyleSheet.create({
 		marginVertical: 4,
 		height: 50,
 		borderWidth: 1,
-		borderColor: colors.green,
 		borderRadius: 4,
 		fontFamily: "Gill Sans",
 		fontSize: 20,

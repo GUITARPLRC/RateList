@@ -31,7 +31,7 @@ export default function ListEditor() {
 				</Pressable>
 			),
 		})
-	}, [selectedList])
+	}, [theme, title])
 
 	const handleSave = async () => {
 		if (!selectedList?.id) return
@@ -104,7 +104,6 @@ const styles = StyleSheet.create({
 	input: {
 		height: 50,
 		borderWidth: 1,
-		borderColor: colors.green,
 		borderRadius: 4,
 		fontFamily: "Gill Sans",
 		fontSize: 20,

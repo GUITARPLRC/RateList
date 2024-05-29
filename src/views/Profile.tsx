@@ -104,7 +104,7 @@ const Profile = () => {
 		navigation.setOptions({
 			headerRight: () => (
 				<TouchableOpacity onPress={updateProfile}>
-					<Text style={[styles.text, { marginRight: 20 }]}>Update</Text>
+					<Text style={[styles.text, { marginRight: 20 }]}>Save</Text>
 				</TouchableOpacity>
 			),
 		})
@@ -206,7 +206,6 @@ const Profile = () => {
 								const avatarBorderStyle =
 									(userAvatar ? userAvatar : profile?.avatar) === avatar
 										? {
-												borderColor: colors.green,
 												borderWidth: 2,
 												borderRadius: screenWidth,
 												padding: 1,
@@ -287,7 +286,6 @@ const styles = StyleSheet.create({
 		marginVertical: 4,
 		height: 50,
 		borderWidth: 1,
-		borderColor: colors.green,
 		borderRadius: 4,
 		fontFamily: "Gill Sans",
 		fontSize: 20,
