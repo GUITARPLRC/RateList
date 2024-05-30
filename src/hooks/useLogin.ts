@@ -3,12 +3,10 @@ import supabase from "../config/supabase"
 import showToast from "../libs/toast"
 import { useAuth } from "../context/auth"
 import AsyncStorage from "@react-native-async-storage/async-storage"
-import { useBadges } from "./useBadges"
 
 export const useLogin = () => {
 	const [loading, setLoading] = useState(false)
 	const { getProfile } = useAuth()
-	const { fetchBadges } = useBadges()
 
 	const handleSignIn = async ({ email, password }: { email: string; password: string }) => {
 		setLoading(true)
@@ -55,10 +53,7 @@ export const useLogin = () => {
 			if (remember) {
 				await AsyncStorage.setItem("remember", JSON.stringify(data))
 			}
-			const success = await handleSignIn(data)
-			if (success) {
-				fetchBadges()
-			}
+			handleSignIn(data)
 		} catch (error) {
 			if (error instanceof Error) {
 				console.error(error.message)

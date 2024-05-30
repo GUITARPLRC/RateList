@@ -10,6 +10,8 @@ import Search from "../components/Search"
 import { navigationRef } from "../libs/navigationUtilities"
 
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
+import { userReview } from "../libs/appStore"
+import { useListItems } from "../hooks/useListItems"
 
 export default function Home() {
 	const {
@@ -22,6 +24,7 @@ export default function Home() {
 		createList,
 	} = useMyLists()
 	const { profile, loading: userLoading } = useAuth()
+	const { listItems } = useListItems()
 
 	useFocusEffect(
 		useCallback(() => {
@@ -32,6 +35,14 @@ export default function Home() {
 	const handleSelectListNavigate = (list: List) => {
 		setSelectedList(list)
 		navigationRef.navigate("List")
+		// ask for store review if user has 3 or more lists
+		if (
+			(myLists.length >= 2 || listItems.length === 3) &&
+			profile &&
+			!profile?.hasSubmittedReview
+		) {
+			userReview(profile.id)
+		}
 	}
 	const isLoading = listLoading || userLoading
 	return (

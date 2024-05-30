@@ -13,8 +13,6 @@ import { useActionSheet } from "@expo/react-native-action-sheet"
 import Confirmation from "../components/Confirmation"
 import showToast from "../libs/toast"
 
-// TODO: rerender list when item delete
-
 const List = () => {
 	const [confirmationOpen, setConfirmationOpen] = useState(false)
 	const navigation = useNavigation()
@@ -83,11 +81,11 @@ const List = () => {
 		navigation.setOptions({
 			headerRight: () => (
 				<View style={styles.listRightHeader}>
-					<Pressable style={{ marginRight: 20 }} onPress={handleDotPress}>
-						<Entypo name="dots-three-vertical" size={20} color="#fff" />
-					</Pressable>
 					<Pressable onPress={handleAddListItem} style={{ marginRight: 20 }}>
 						<Entypo name="plus" size={30} color="#fff" />
+					</Pressable>
+					<Pressable style={{ marginRight: 20 }} onPress={handleDotPress}>
+						<Entypo name="dots-three-vertical" size={20} color="#fff" />
 					</Pressable>
 				</View>
 			),

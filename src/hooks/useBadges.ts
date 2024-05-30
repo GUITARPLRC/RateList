@@ -5,12 +5,7 @@ import showToast from "../libs/toast"
 
 export const useBadges = () => {
 	const { profile } = useAuth()
-	const [badges, setBadges] = useState<Badge[]>([])
 	const [loading, setLoading] = useState(false)
-
-	useEffect(() => {
-		fetchBadges()
-	}, [])
 
 	const fetchBadges = async () => {
 		if (loading || !profile?.id) {
@@ -26,7 +21,7 @@ export const useBadges = () => {
 			if (error) {
 				throw new Error(error.message)
 			} else if (data) {
-				setBadges(data)
+				return data
 			}
 		} catch (error) {
 			if (error instanceof Error) {
@@ -37,7 +32,8 @@ export const useBadges = () => {
 		}
 	}
 
-	const checkBadges = (task: checkBadgesArgs) => {
+	const checkBadges = async (task: checkBadgesArgs) => {
+		const data = await fetchBadges()
 		let type: BadgeTypes | null = null
 		switch (task) {
 			case "addList":
@@ -53,7 +49,7 @@ export const useBadges = () => {
 				type = "crown"
 				break
 		}
-		const badgeExists = badges.find((badge) => badge.type === type)
+		const badgeExists = data?.find((badge) => badge.type === type)
 		if (type && !badgeExists) {
 			createBadge(type)
 		}
@@ -72,20 +68,18 @@ export const useBadges = () => {
 			if (error) {
 				throw new Error(error.message)
 			} else {
-				fetchBadges()
+				showToast("Achievement Unlocked!")
 			}
 		} catch (error) {
 			if (error instanceof Error) {
 				console.error(error.message)
 			}
 		} finally {
-			showToast("Achievement Unlocked!")
 			setLoading(false)
 		}
 	}
 
 	return {
-		badges,
 		loading,
 		setLoading,
 		checkBadges,
