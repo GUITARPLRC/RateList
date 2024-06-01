@@ -21,6 +21,7 @@ export const useBadges = () => {
 			if (error) {
 				throw new Error(error.message)
 			} else if (data) {
+				setLoading(false)
 				return data
 			}
 		} catch (error) {

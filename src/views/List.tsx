@@ -35,13 +35,6 @@ const List = () => {
 	)
 
 	const { addListItem } = useListItems()
-	const { setSelectedListItem } = useMyLists()
-	const handleAddListItem = async () => {
-		const newListItem = await addListItem()
-		if (!newListItem) return
-		setSelectedListItem(newListItem)
-		navigationRef.navigate("ItemEditor")
-	}
 
 	const handleDelete = async () => {
 		setConfirmationOpen(false)
@@ -81,7 +74,7 @@ const List = () => {
 		navigation.setOptions({
 			headerRight: () => (
 				<View style={styles.listRightHeader}>
-					<Pressable onPress={handleAddListItem} style={{ marginRight: 20 }}>
+					<Pressable onPress={addListItem} style={{ marginRight: 20 }}>
 						<Entypo name="plus" size={30} color="#fff" />
 					</Pressable>
 					<Pressable style={{ marginRight: 20 }} onPress={handleDotPress}>
@@ -131,7 +124,7 @@ const List = () => {
 					<Text style={[styles.text, { fontSize: 20 }]}>
 						No items in this list use the + button above or the button below
 					</Text>
-					<Button title="Add Item" onPress={handleAddListItem} />
+					<Button title="Add Item" onPress={addListItem} />
 				</View>
 			)}
 			<Confirmation
