@@ -18,7 +18,7 @@ import Confirmation from "../components/Confirmation"
 import showToast from "../libs/toast"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import useMyLists from "../hooks/useMyLists"
-import { useNavigation } from "@react-navigation/native"
+import { useFocusEffect, useNavigation } from "@react-navigation/native"
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
 
 export const avatars = {
@@ -100,8 +100,13 @@ const Profile = () => {
 		setUserAvatar(profile?.avatar || "")
 	}, [profile])
 
+	useFocusEffect(
+		React.useCallback(() => {
+			fetchBadges()
+		}, []),
+	)
+
 	useLayoutEffect(() => {
-		fetchBadges()
 		navigation.setOptions({
 			headerRight: () => (
 				<TouchableOpacity onPress={updateProfile}>
@@ -166,9 +171,16 @@ const Profile = () => {
 
 	const screenWidth = Dimensions.get("window").width
 
+	if (loading || badgesLoading) {
+		return (
+			<View style={[styles.container]}>
+				<Spinner visible />
+			</View>
+		)
+	}
+
 	return (
 		<KeyboardAwareScrollView style={[styles.container]}>
-			<Spinner visible={loading || badgesLoading} />
 			<Confirmation
 				isOpen={confirmOpen}
 				onClose={() => setConfirmOpen(false)}

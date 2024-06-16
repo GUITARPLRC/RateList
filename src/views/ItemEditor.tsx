@@ -98,7 +98,7 @@ export default function ItemEditor() {
 					marginBottom: 20,
 				}}
 			>
-				<Text style={styles.text}>Sub Title</Text>
+				<Text style={styles.text}>Subtitle</Text>
 				<TextInput
 					value={subTitle}
 					style={styles.input}

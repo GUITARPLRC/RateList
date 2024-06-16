@@ -8,6 +8,7 @@ import Checkbox from "expo-checkbox"
 import { useLogin } from "../hooks/useLogin"
 import { authNavigationRef } from "../libs/navigationUtilities"
 import Spinner from "react-native-loading-spinner-overlay"
+import { validateEmail } from "../libs/email"
 
 const SignUp = () => {
 	const [email, setEmail] = useState("")
@@ -27,9 +28,7 @@ const SignUp = () => {
 			return
 		}
 
-		// check if email is valid
-		const emailRegex = /\S+@\S+\.\S+/
-		if (!emailRegex.test(email)) {
+		if (!validateEmail(email)) {
 			showToast("Please enter a valid email")
 			setBusy(false)
 			return

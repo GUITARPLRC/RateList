@@ -16,7 +16,7 @@ import showToast from "../libs/toast"
 const List = () => {
 	const [confirmationOpen, setConfirmationOpen] = useState(false)
 	const navigation = useNavigation()
-	const { selectedList, deleteList } = useMyLists()
+	const { selectedList, deleteList, updateList } = useMyLists()
 	const {
 		loading,
 		listItems,
@@ -31,10 +31,15 @@ const List = () => {
 	useFocusEffect(
 		useCallback(() => {
 			fetchListItems()
-		}, []),
+		}, [selectedList]),
 	)
 
 	const { addListItem } = useListItems()
+
+	const handleAddListItem = async () => {
+		await addListItem()
+		fetchListItems()
+	}
 
 	const handleDelete = async () => {
 		setConfirmationOpen(false)
@@ -74,7 +79,7 @@ const List = () => {
 		navigation.setOptions({
 			headerRight: () => (
 				<View style={styles.listRightHeader}>
-					<Pressable onPress={addListItem} style={{ marginRight: 20 }}>
+					<Pressable onPress={handleAddListItem} style={{ marginRight: 20 }}>
 						<Entypo name="plus" size={30} color="#fff" />
 					</Pressable>
 					<Pressable style={{ marginRight: 20 }} onPress={handleDotPress}>
@@ -86,19 +91,49 @@ const List = () => {
 	}, [])
 
 	const handleSort = () => {
-		let newSortValue: SortValue = "Title"
-		if (sortValue === "Title") {
-			newSortValue = "Rating Up"
-		} else if (sortValue === "Rating Up") {
-			newSortValue = "Rating Down"
+		let newSortValue: SortValue = "Title Desc"
+		switch (sortValue) {
+			case "Title Asc":
+				newSortValue = "Title Desc"
+				break
+			case "Title Desc":
+				newSortValue = "Rating Asc"
+				break
+			case "Rating Asc":
+				newSortValue = "Rating Desc"
+				break
+			case "Rating Desc":
+				newSortValue = "Subtitle Asc"
+				break
+			case "Subtitle Asc":
+				newSortValue = "Subtitle Desc"
+				break
+			case "Subtitle Desc":
+				newSortValue = "Title Asc"
+				break
+			default:
+				break
 		}
 		setSortValue(newSortValue)
+		// persist change to api
+		const newList = {
+			...selectedList!,
+			sortKey: newSortValue,
+		}
+		updateList(newList)
+	}
+
+	if (loading) {
+		return (
+			<View style={[styles.container]}>
+				<Spinner visible />
+			</View>
+		)
 	}
 
 	return (
 		<View style={[styles.container]}>
 			<View style={[styles.titleContainer, styles.margin]}>
-				<Spinner visible={loading} />
 				<Text style={[styles.text, styles.categoryTitle]}>{selectedList?.title || ""}</Text>
 			</View>
 			{listItems.length > 0 ? (
@@ -124,7 +159,7 @@ const List = () => {
 					<Text style={[styles.text, { fontSize: 20 }]}>
 						No items in this list use the + button above or the button below
 					</Text>
-					<Button title="Add Item" onPress={addListItem} />
+					<Button title="Add Item" onPress={handleAddListItem} />
 				</View>
 			)}
 			<Confirmation

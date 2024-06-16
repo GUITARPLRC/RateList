@@ -76,12 +76,16 @@ export default function MyListsProvider({ children }: PropsWithChildren) {
 		if (listData) {
 			let sortedData = listData
 			if (searchValue !== "") {
-				sortedData = listData.filter((list) => {
-					if (list.title?.toLowerCase().includes(searchValue.toLowerCase())) return true
-					return false
-				})
+				sortedData = listData
+					.filter((list) => {
+						if (list.title?.toLowerCase().includes(searchValue.toLowerCase())) return true
+						return false
+					})
+					.sort((a, b) => {
+						return a.title?.localeCompare(b.title ?? "") ?? 0
+					})
 			}
-			setMyLists(sortedData)
+			setMyLists(sortedData.sort((a, b) => a.title?.localeCompare(b.title ?? "") ?? 0))
 		}
 	}
 

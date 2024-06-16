@@ -1,12 +1,12 @@
 interface Item {
 	id: string
-	title: string
-	checked: boolean
-	priority: string
-	label: string
-	description: string
-	subTitle: string
-	rating: number
+	title?: string
+	checked?: boolean
+	priority?: string
+	label?: string
+	description?: string
+	subTitle?: string
+	rating?: number
 }
 
 interface List {
@@ -16,4 +16,6 @@ interface List {
 	userId: string
 	theme: string
 	items?: Item[]
+	sortKey: SortValue
+	created_at: Date
 }

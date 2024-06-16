@@ -10,14 +10,14 @@ export const useListItems = () => {
 	const [itemData, setItemData] = useState<Item[]>([])
 	const [loading, setLoading] = useState(false)
 	const [searchValue, setSearchValue] = useState("")
-	const [sortValue, setSortValue] = useState<SortValue>("Title")
+	const [sortValue, setSortValue] = useState<SortValue>(selectedList?.sortKey ?? "Title Asc")
 	const { checkBadges } = useBadges()
 
 	useEffect(() => {
-		filterItemData()
+		filterSortData()
 	}, [searchValue, itemData, sortValue])
 
-	const filterItemData = () => {
+	const filterSortData = () => {
 		if (itemData) {
 			let sortedData = [...itemData]
 			if (searchValue) {
@@ -31,12 +31,28 @@ export const useListItems = () => {
 				})
 			}
 			const newlySortedData = sortedData.sort((a, b) => {
-				if (sortValue === "Title") {
-					return a.title.toLocaleLowerCase().localeCompare(b.title.toLocaleLowerCase())
-				} else if (sortValue === "Rating Up") {
-					return b.rating - a.rating
+				if (sortValue === "Title Asc") {
+					return (a.title?.toLocaleLowerCase() ?? "").localeCompare(
+						b.title?.toLocaleLowerCase() ?? "",
+					)
+				} else if (sortValue === "Title Desc") {
+					return (b.title?.toLocaleLowerCase() ?? "").localeCompare(
+						a.title?.toLocaleLowerCase() ?? "",
+					)
+				} else if (sortValue === "Rating Asc") {
+					return (a.rating ?? 0) - (b.rating ?? 0)
+				} else if (sortValue === "Rating Desc") {
+					return (b.rating ?? 0) - (a.rating ?? 0)
+				} else if (sortValue === "Subtitle Asc") {
+					return (a.subTitle?.toLocaleLowerCase() ?? "").localeCompare(
+						b.subTitle?.toLocaleLowerCase() ?? "",
+					)
+				} else if (sortValue === "Subtitle Desc") {
+					return (b.subTitle?.toLocaleLowerCase() ?? "").localeCompare(
+						a.subTitle?.toLocaleLowerCase() ?? "",
+					)
 				} else {
-					return a.rating - b.rating
+					return 0
 				}
 			})
 			setListItems(newlySortedData)
@@ -49,6 +65,7 @@ export const useListItems = () => {
 		}
 		try {
 			setLoading(true)
+			setSortValue(selectedList.sortKey ?? "Title Asc")
 			let { data, error } = await supabase
 				.from("listitems")
 				.select("*")
@@ -83,8 +100,6 @@ export const useListItems = () => {
 
 			if (error) {
 				throw new Error(error.message)
-			} else {
-				fetchListItems()
 			}
 		} catch (error) {
 			if (error instanceof Error) {

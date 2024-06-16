@@ -3,6 +3,7 @@ import supabase from "../config/supabase"
 import showToast from "../libs/toast"
 import { useAuth } from "../context/auth"
 import AsyncStorage from "@react-native-async-storage/async-storage"
+import { validateEmail } from "../libs/email"
 
 export const useLogin = () => {
 	const [loading, setLoading] = useState(false)

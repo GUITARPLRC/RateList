@@ -5,25 +5,15 @@ import useMyLists from "../hooks/useMyLists"
 import { colors, themes } from "../styles"
 import showToast from "../libs/toast"
 import { navigationRef } from "../libs/navigationUtilities"
-import { useNavigation } from "@react-navigation/native"
+import { useFocusEffect, useNavigation } from "@react-navigation/native"
 
 export default function ListEditor() {
-	const { selectedList, updateList, createList, setSelectedList } = useMyLists()
+	const { selectedList, updateList } = useMyLists()
 	const [title, setTitle] = useState(selectedList?.title || "")
 	const [theme, setTheme] = useState(selectedList?.theme || "green")
 	const navigation = useNavigation()
 
-	const handleNewList = async () => {
-		if (!selectedList?.id) {
-			const data = await createList()
-			setTitle("")
-			setTheme("green")
-			setSelectedList(data)
-		}
-	}
-
 	useLayoutEffect(() => {
-		handleNewList()
 		navigation.setOptions({
 			headerRight: () => (
 				<Pressable onPress={handleSave} style={{ marginRight: 20 }}>
@@ -32,6 +22,16 @@ export default function ListEditor() {
 			),
 		})
 	}, [theme, title])
+
+	useFocusEffect(() => {
+		if (!selectedList) {
+			setTitle("")
+			setTheme("green")
+		} else {
+			setTitle(selectedList.title ?? "")
+			setTheme(selectedList.theme)
+		}
+	})
 
 	const handleSave = async () => {
 		if (!selectedList?.id) return

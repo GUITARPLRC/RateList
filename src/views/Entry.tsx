@@ -151,6 +151,7 @@ const MainStack = () => {
 					name="List"
 					component={List}
 					options={{
+						title: "List Items",
 						headerLeft: () => renderBackButton("Home"),
 					}}
 				/>
