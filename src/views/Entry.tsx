@@ -68,7 +68,7 @@ const CustomTabs = ({ state }: any) => {
 				}}
 			>
 				{/* home icon */}
-				<Entypo name="home" size={25} color={focusedOptions.name === "Home" ? "#f25555" : "#fff"} />
+				<Entypo name="home" size={20} color={focusedOptions.name === "Home" ? "#f25555" : "#fff"} />
 				<Text
 					style={{ ...styles.tabLabel, color: focusedOptions.name === "Home" ? "#f25555" : "#fff" }}
 				>
@@ -88,7 +88,7 @@ const CustomTabs = ({ state }: any) => {
 				) : (
 					<Entypo
 						name="user"
-						size={30}
+						size={20}
 						color={focusedOptions.name === "Profile" ? "#f25555" : "#fff"}
 					/>
 				)}

@@ -180,14 +180,14 @@ const Profile = () => {
 	}
 
 	return (
-		<KeyboardAwareScrollView style={[styles.container]}>
+		<KeyboardAwareScrollView contentContainerStyle={[styles.container]}>
 			<Confirmation
 				isOpen={confirmOpen}
 				onClose={() => setConfirmOpen(false)}
 				onConfirm={confirmText ? deleteAccount : signOut}
 				confirmText={confirmText ? confirmText : "Are you sure you want to sign out?"}
 			/>
-			<View style={{ flex: 1, justifyContent: "space-between" }}>
+			<View style={{ flex: 1 }}>
 				<View style={{ marginBottom: 20 }}>
 					{/* Display Name */}
 
@@ -248,7 +248,7 @@ const Profile = () => {
 				<Badges />
 			</View>
 
-			<View>
+			<View style={{ alignItems: "center" }}>
 				{/* Sign out */}
 				<TouchableOpacity
 					onPress={() => {
@@ -282,6 +282,7 @@ const Profile = () => {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
+		justifyContent: "space-between",
 		backgroundColor: colors.darkBackground,
 		padding: 20,
 	},
@@ -293,11 +294,11 @@ const styles = StyleSheet.create({
 		borderRadius: 4,
 	},
 	buttonDanger: {
-		marginVertical: 25,
 		alignItems: "center",
 		backgroundColor: colors.red,
 		padding: 12,
 		borderRadius: 4,
+		width: 200,
 	},
 	input: {
 		marginVertical: 4,
