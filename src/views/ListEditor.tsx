@@ -1,11 +1,11 @@
 import { View, TextInput, StyleSheet, Text, Pressable } from "react-native"
-import { useLayoutEffect, useState } from "react"
+import { useEffect, useLayoutEffect, useState } from "react"
 import { Picker } from "@react-native-picker/picker"
 import useMyLists from "../hooks/useMyLists"
 import { colors, themes } from "../styles"
 import showToast from "../libs/toast"
 import { navigationRef } from "../libs/navigationUtilities"
-import { useFocusEffect, useNavigation } from "@react-navigation/native"
+import { useNavigation } from "@react-navigation/native"
 
 export default function ListEditor() {
 	const { selectedList, updateList } = useMyLists()
@@ -23,7 +23,7 @@ export default function ListEditor() {
 		})
 	}, [theme, title])
 
-	useFocusEffect(() => {
+	useEffect(() => {
 		if (!selectedList) {
 			setTitle("")
 			setTheme("green")
@@ -31,7 +31,7 @@ export default function ListEditor() {
 			setTitle(selectedList.title ?? "")
 			setTheme(selectedList.theme)
 		}
-	})
+	}, [selectedList?.id])
 
 	const handleSave = async () => {
 		if (!selectedList?.id) return

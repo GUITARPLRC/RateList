@@ -88,7 +88,7 @@ const List = () => {
 				</View>
 			),
 		})
-	}, [])
+	}, [selectedList?.id, listItems.length, sortValue])
 
 	const handleSort = () => {
 		let newSortValue: SortValue = "Title Desc"
